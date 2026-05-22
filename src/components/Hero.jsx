@@ -54,10 +54,7 @@ export default function Hero() {
   }, []);
 
   const scrollToCollection = () => {
-    const element = document.getElementById('collection');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+    window.location.hash = '#/collection';
   };
 
   return (

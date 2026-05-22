@@ -334,6 +334,16 @@ export default function Collection({ extraGames = [] }) {
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
         
+        {/* Standalone Page Navigation Breadcrumb */}
+        <div className="mb-10 flex items-center">
+          <button 
+            onClick={() => window.location.hash = '#/'}
+            className="group flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-widest text-[#f8b146] hover:text-[#f28a75] transition-all duration-300 cursor-pointer bg-[#3a1d42]/40 border border-[#f8b146]/20 py-2 px-4 rounded-full hover:bg-[#f8b146]/10"
+          >
+            <span className="group-hover:-translate-x-1.5 transition-transform duration-300">←</span> Return to Main Atelier
+          </button>
+        </div>
+
         {/* Section Header */}
         <div className="flex flex-col items-start text-left mb-16 max-w-2xl">
           <p className="font-mono text-xs uppercase tracking-[0.25em] text-[#f8b146] mb-3">

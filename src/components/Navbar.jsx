@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Sparkles, MapPin } from 'lucide-react';
 
-export default function Navbar({ onOpenAdmin }) {
+export default function Navbar({ onOpenAdmin, currentView }) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -33,7 +33,11 @@ export default function Navbar({ onOpenAdmin }) {
   }, []);
 
   const handleLogoClick = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (currentView === 'collection') {
+      window.location.hash = '#/';
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
     
     // 1. Trigger the 3D dice roll animation if not already spinning
     if (!isSpinning) {
@@ -82,9 +86,19 @@ export default function Navbar({ onOpenAdmin }) {
   };
 
   const scrollToSection = (id) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+    if (id === 'collection') {
+      window.location.hash = '#/collection';
+    } else {
+      if (currentView === 'collection') {
+        window.location.hash = `#/${id}`;
+      } else {
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          window.location.hash = `#/${id}`;
+        }
+      }
     }
   };
 

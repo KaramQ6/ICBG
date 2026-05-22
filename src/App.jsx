@@ -4,6 +4,7 @@ import Hero from './components/Hero';
 import Philosophy from './components/Philosophy';
 import WeeklySpotlight from './components/WeeklySpotlight';
 import Collection from './components/Collection';
+import CollectionTeaser from './components/CollectionTeaser';
 import Gallery from './components/Gallery';
 import JoinForm from './components/JoinForm';
 import Footer from './components/Footer';
@@ -42,6 +43,38 @@ export default function App() {
       return stored ? JSON.parse(stored) : DEFAULT_SCHEDULE;
     } catch { return DEFAULT_SCHEDULE; }
   });
+
+  // SPA Custom Routing State
+  const [currentView, setCurrentView] = useState(() => {
+    const hash = window.location.hash;
+    return hash === '#/collection' || hash === '#collection' ? 'collection' : 'home';
+  });
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      if (hash === '#/collection' || hash === '#collection') {
+        setCurrentView('collection');
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      } else {
+        setCurrentView('home');
+        if (hash && hash !== '#/' && hash !== '#') {
+          const id = hash.replace('#', '').replace('/', '');
+          setTimeout(() => {
+            const element = document.getElementById(id);
+            if (element) {
+              element.scrollIntoView({ behavior: 'smooth' });
+            }
+          }, 100);
+        }
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    // Initial check for deep links on mount
+    handleHashChange();
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   // Global Konami Code Event Listener
   useEffect(() => {
@@ -140,10 +173,7 @@ export default function App() {
 
   // Smooth scroll helper
   const handleScrollToCollection = () => {
-    const element = document.getElementById('collection');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+    window.location.hash = '#/collection';
   };
 
   return (
@@ -160,31 +190,41 @@ export default function App() {
       }`} />
 
       {/* Floating Island Navigation */}
-      <Navbar onOpenAdmin={() => setIsAdminOpen(true)} />
+      <Navbar onOpenAdmin={() => setIsAdminOpen(true)} currentView={currentView} />
 
       {/* Main Experience sections */}
       <main>
-        {/* The Opening Shot (Hero) */}
-        <Hero />
+        {currentView === 'collection' ? (
+          /* Dedicated subpage (Collection Archive) */
+          <div className="pt-24">
+            <Collection extraGames={extraGames} />
+          </div>
+        ) : (
+          /* Main Landing Page View */
+          <>
+            {/* The Opening Shot (Hero) */}
+            <Hero />
 
-        {/* The Manifesto (Philosophy) */}
-        <Philosophy />
+            {/* The Manifesto (Philosophy) */}
+            <Philosophy />
 
-        {/* Weekly Spotlight (Featured Campaign & Gathering Info) */}
-        <WeeklySpotlight 
-          schedule={schedule} 
-          games={allGames} 
-          onScrollToCollection={handleScrollToCollection} 
-        />
+            {/* Weekly Spotlight (Featured Campaign & Gathering Info) */}
+            <WeeklySpotlight 
+              schedule={schedule} 
+              games={allGames} 
+              onScrollToCollection={handleScrollToCollection} 
+            />
 
-        {/* The Atelier Vault (Collection Archive) */}
-        <Collection extraGames={extraGames} />
+            {/* Curated Collection Preview (Teaser Showcase) */}
+            <CollectionTeaser onNavigateToFullCollection={handleScrollToCollection} />
 
-        {/* Captured Moments (Gallery) */}
-        <Gallery extraImages={extraGalleryImages} />
+            {/* Captured Moments (Gallery) */}
+            <Gallery extraImages={extraGalleryImages} />
 
-        {/* Membership Admission & Vetted Onboarding Form */}
-        <JoinForm />
+            {/* Membership Admission & Vetted Onboarding Form */}
+            <JoinForm />
+          </>
+        )}
       </main>
 
       {/* The Rounded Obsidian Footer */}
