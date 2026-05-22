@@ -72,7 +72,7 @@ export default function Hero() {
           style={{ backgroundImage: `url('/assets/images/hero-bg.jpeg')` }}
         />
         {/* Cinematic Vignette & Bottom Obsidian Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/45 to-transparent z-10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D12] via-[#0D0D12]/80 to-transparent z-10" />
         <div className="absolute inset-0 bg-radial-gradient z-10 opacity-60 pointer-events-none" />
       </div>
 
@@ -95,7 +95,7 @@ export default function Hero() {
           <div ref={title2Ref} className="block overflow-hidden pb-1">
             THE PREMIER BOARD GAME
           </div>
-          <div ref={title3Ref} className="font-serif italic font-light text-champagne block mt-2">
+          <div ref={title3Ref} className="font-serif italic font-light text-champagne block mt-2 text-shadow-premium">
             Experience.
           </div>
         </h1>
@@ -144,10 +144,12 @@ export default function Hero() {
         <div ref={ctaRef} className="mt-10 flex items-center gap-4">
           <button
             onClick={scrollToCollection}
-            className="magnetic-btn px-8 py-4 bg-gradient-to-r from-champagne to-[#E5CE8B] text-obsidian font-sans font-bold text-xs uppercase tracking-widest shadow-xl shadow-champagne/10 hover:shadow-champagne/30"
+            className="group relative px-8 py-4 bg-[#0D0D12] border border-[#C9A84C]/30 rounded-full font-sans font-bold text-xs uppercase tracking-widest shadow-xl shadow-champagne/5 hover:scale-[1.03] hover:shadow-[0_0_25px_rgba(201,168,76,0.3)] hover:border-[#C9A84C] transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] overflow-hidden"
           >
-            <span className="slide-bg"></span>
-            <span className="relative z-10">Explore Collection</span>
+            <span className="absolute inset-0 bg-gradient-to-r from-[#C9A84C]/10 to-[#E3CD89]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <span className="relative z-10 bg-clip-text text-transparent bg-gradient-to-r from-[#C9A84C] to-[#E3CD89]">
+              Explore Collection
+            </span>
           </button>
           
           <button

@@ -24,9 +24,11 @@ export default function Footer() {
           {/* Column 1: Brand Pitch */}
           <div className="flex flex-col items-start text-left lg:col-span-2">
             <div className="flex items-center gap-2.5 mb-6 group cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-champagne to-[#DFCA85] flex items-center justify-center">
-                <span className="font-mono text-obsidian font-extrabold text-[10px] tracking-wider">IC</span>
-              </div>
+              <img 
+                src="/assets/images/logo.png" 
+                alt="ICBG Logo" 
+                className="w-12 h-12 object-contain filter drop-shadow-[0_0_12px_rgba(201,168,76,0.25)] group-hover:scale-105 transition-transform duration-300"
+              />
               <span className="font-sans font-black text-lg tracking-widest text-ivory">
                 ICBG<span className="text-champagne">.</span>
               </span>
@@ -100,16 +102,7 @@ export default function Footer() {
         {/* Bottom Panel */}
         <div className="mt-12 flex flex-col md:flex-row justify-between items-center gap-6">
           
-          {/* Operational Indicator */}
-          <div className="flex items-center gap-3 py-2 px-4 rounded-full bg-obsidian border border-ivory/5 shadow-inner">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-ivory/60">
-              SYSTEM OPERATIONAL // ICBG V1.0.0
-            </span>
-          </div>
+
 
           {/* Copyrights */}
           <div className="flex flex-col md:flex-row items-center gap-4 text-xs font-mono text-ivory/40">

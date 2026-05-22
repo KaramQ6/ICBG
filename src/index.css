@@ -16,30 +16,22 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    background-color: var(--color-obsidian);
+    background-color: #0D0D12;
     font-family: 'Inter', sans-serif;
   }
 
   body {
-    background-color: var(--color-obsidian);
-    color: var(--color-ivory);
+    background-color: #0D0D12;
+    color: #FAF8F5;
     margin: 0;
     padding: 0;
     min-height: 100vh;
   }
 }
 
-/* Global Noise Overlay Texture */
-.noise-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  opacity: 0.04;
-  pointer-events: none;
-  z-index: 9999;
-  mix-blend-mode: overlay;
+/* Premium text shadow utility */
+.text-shadow-premium {
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 
 /* Custom Premium Scrollbar */
@@ -77,47 +69,20 @@
   border: 1px solid rgba(201, 168, 76, 0.3);
 }
 
-/* Cards & Containers - Strict rounded custom corner system */
+/* Cards & Containers - Tactile physical board game style */
 .premium-card {
-  border-radius: 2.5rem;
-  border: 1px solid rgba(201, 168, 76, 0.1);
-  background: linear-gradient(135deg, rgba(42, 42, 53, 0.2) 0%, rgba(13, 13, 18, 0.4) 100%);
-  transition: border-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  background-color: #15151D;
+  border-radius: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  backdrop-filter: blur(12px);
 }
 
 .premium-card:hover {
+  transform: translateY(-8px);
   border-color: rgba(201, 168, 76, 0.4);
-  transform: translateY(-4px) scale(1.01);
-}
-
-/* Custom dynamic sliding background button */
-.magnetic-btn {
-  position: relative;
-  overflow: hidden;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 9999px;
-  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.magnetic-btn:hover {
-  transform: scale(1.03);
-}
-
-.magnetic-btn span.slide-bg {
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-  transition: left 0.6s ease;
-}
-
-.magnetic-btn:hover span.slide-bg {
-  left: 100%;
+  box-shadow: 0 10px 40px rgba(201, 168, 76, 0.15);
 }
 
 /* Text Lift animations */

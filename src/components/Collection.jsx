@@ -2,10 +2,13 @@ import React, { useState, useMemo } from 'react';
 import gamesData from '../data/board_games.json';
 import { Search, Users, Clock, Calendar, ExternalLink, Play, Film, Award, Hash } from 'lucide-react';
 
-export default function Collection() {
+export default function Collection({ extraGames = [] }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeType, setActiveType] = useState('All');
   const [activeComp, setActiveComp] = useState('All');
+
+  // Merge the original JSON data with any admin-added games
+  const allGames = useMemo(() => [...extraGames, ...gamesData], [extraGames]);
 
   // Available game types derived from data
   const gameTypes = ['All', 'Social', 'Easy', 'Light', 'Medium', 'Heavy'];
@@ -36,7 +39,7 @@ export default function Collection() {
 
   // Filter logic
   const filteredGames = useMemo(() => {
-    return gamesData.filter((game) => {
+    return allGames.filter((game) => {
       const matchesSearch =
         game.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         game.theme.toLowerCase().includes(searchTerm.toLowerCase());
@@ -51,7 +54,7 @@ export default function Collection() {
 
       return matchesSearch && matchesType && matchesComp;
     });
-  }, [searchTerm, activeType, activeComp]);
+  }, [allGames, searchTerm, activeType, activeComp]);
 
   // Decode Google redirects inside our links cleanly if possible
   const getCleanLink = (link) => {
@@ -81,7 +84,7 @@ export default function Collection() {
             THE ARCHIVE
           </h2>
           <p className="font-serif italic text-lg text-ivory/60 mt-4 leading-relaxed">
-            Browse our meticulously curated collection of 80 strategic masterpieces, social deduction frameworks, and tactical puzzles.
+            Browse our meticulously curated collection of {allGames.length} strategic masterpieces, social deduction frameworks, and tactical puzzles.
           </p>
         </div>
 
@@ -159,7 +162,7 @@ export default function Collection() {
         {/* Total Results Stats */}
         <div className="flex justify-between items-center mb-8 px-2">
           <span className="font-mono text-xs text-ivory/40">
-            SHOWING <span className="text-champagne font-bold">{filteredGames.length}</span> OF <span className="text-ivory/60">80 CURATED GAMES</span>
+            SHOWING <span className="text-champagne font-bold">{filteredGames.length}</span> OF <span className="text-ivory/60">{allGames.length} CURATED GAMES</span>
           </span>
         </div>
 
@@ -169,7 +172,7 @@ export default function Collection() {
             {filteredGames.map((game, index) => (
               <div
                 key={game.num || index}
-                className="premium-card flex flex-col justify-between h-full bg-[#13131A] border border-ivory/5 p-5 relative overflow-hidden group"
+                className="flex flex-col justify-between h-full bg-[#15151D] rounded-[2rem] border border-white/5 shadow-lg overflow-hidden backdrop-blur-md transition-all duration-500 hover:-translate-y-2 hover:border-[#C9A84C]/40 hover:shadow-[0_10px_40px_rgba(201,168,76,0.15)] p-5 relative group"
               >
                 {/* Gold micro numbering */}
                 <div className="absolute top-4 right-5 font-mono text-[10px] text-champagne/30 group-hover:text-champagne/60 transition-colors duration-300 flex items-center gap-0.5">
@@ -179,13 +182,22 @@ export default function Collection() {
                 <div>
                   {/* Aspect Ratio Box Image Container */}
                   <div className="relative w-full aspect-[4/3] rounded-[1.5rem] overflow-hidden bg-obsidian flex items-center justify-center p-3 border border-ivory/5 group-hover:border-champagne/20 transition-colors duration-300">
-                    <img
-                      src={game.box_img || game.play_img}
-                      alt={game.title}
-                      onError={(e) => handleImageError(e, game.title)}
-                      className="max-w-full max-h-full object-contain filter drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
-                      loading="lazy"
-                    />
+                    {(game.box_img || game.play_img) ? (
+                      <img
+                        src={game.box_img || game.play_img}
+                        alt={game.title}
+                        onError={(e) => handleImageError(e, game.title)}
+                        className="max-w-full max-h-full object-contain filter drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center text-champagne font-mono">
+                        <span className="text-3xl font-black tracking-widest mb-1">
+                          {game.title.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()}
+                        </span>
+                        <span className="text-[9px] uppercase tracking-wider opacity-60">No Box Shot</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Card Tags */}

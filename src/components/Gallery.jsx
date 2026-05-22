@@ -1,30 +1,36 @@
 import React from 'react';
-import { Camera, Image as ImageIcon, MapPin } from 'lucide-react';
+import { Camera, Image as ImageIcon, MapPin, Trash2 } from 'lucide-react';
 
-export default function Gallery() {
-  const images = [
-    {
-      src: '/assets/images/gallery/community-1.jpeg',
-      title: 'Deep Focus & Tactical Clashes',
-      category: 'Play Session',
-      aspect: 'aspect-[3/4]',
-      desc: 'Late night strategy showdowns where every move is calculated and every card represents a battle of minds.'
-    },
-    {
-      src: '/assets/images/gallery/community-3.jpeg',
-      title: 'A Sanctuary for Thinkers',
-      category: 'Atelier Vibe',
-      aspect: 'aspect-square',
-      desc: 'The cozy, strategic atmosphere at Cortina.D Cafe. A haven of coffee, community, and tactical joy.'
-    },
-    {
-      src: '/assets/images/gallery/community-2.jpeg',
-      title: 'Laughter, Alliances & Betrayals',
-      category: 'Social Deduction',
-      aspect: 'aspect-[4/3]',
-      desc: 'Moments of pure social bonding, high-stakes bluffing, and absolute social chess.'
-    }
-  ];
+// Default hardcoded gallery images
+const DEFAULT_IMAGES = [
+  {
+    src: '/assets/images/gallery/community-1.jpeg',
+    title: 'Deep Focus & Tactical Clashes',
+    category: 'Play Session',
+    aspect: 'aspect-[3/4]',
+    desc: 'Late night strategy showdowns where every move is calculated and every card represents a battle of minds.'
+  },
+  {
+    src: '/assets/images/gallery/community-3.jpeg',
+    title: 'A Sanctuary for Thinkers',
+    category: 'Atelier Vibe',
+    aspect: 'aspect-square',
+    desc: 'The cozy, strategic atmosphere at Cortina.D Cafe. A haven of coffee, community, and tactical joy.'
+  },
+  {
+    src: '/assets/images/gallery/community-2.jpeg',
+    title: 'Laughter, Alliances & Betrayals',
+    category: 'Social Deduction',
+    aspect: 'aspect-[4/3]',
+    desc: 'Moments of pure social bonding, high-stakes bluffing, and absolute social chess.'
+  }
+];
+
+const ASPECT_OPTIONS = ['aspect-[3/4]', 'aspect-square', 'aspect-[4/3]'];
+
+export default function Gallery({ extraImages = [] }) {
+  // Merge default images with admin-added ones
+  const allImages = [...DEFAULT_IMAGES, ...extraImages];
 
   return (
     <section
@@ -54,10 +60,10 @@ export default function Gallery() {
 
         {/* Masonry Layout Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
-          {images.map((img, idx) => (
+          {allImages.map((img, idx) => (
             <div
               key={idx}
-              className={`premium-card relative overflow-hidden group bg-[#13131A] border border-ivory/5 p-4 rounded-[2.5rem] ${img.aspect} flex flex-col justify-between`}
+              className={`premium-card relative overflow-hidden group bg-[#13131A] border border-ivory/5 p-4 rounded-[2.5rem] ${img.aspect || 'aspect-square'} flex flex-col justify-between`}
             >
               {/* Inner Image Container */}
               <div className="relative w-full h-[70%] rounded-[1.8rem] overflow-hidden bg-obsidian border border-ivory/5">
