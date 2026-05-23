@@ -40,7 +40,7 @@ export default function Footer({ onTriggerJenga, onOpenDisputes }) {
           <div className="flex flex-col items-start text-left lg:col-span-2">
             <div className="flex items-center gap-2.5 mb-6 group cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
               <img 
-                src="/assets/images/logo.png" 
+                src="/assets/images/IBGC logos.svg" 
                 alt="ICBG Logo" 
                 className="w-12 h-12 object-contain filter drop-shadow-[0_0_12px_rgba(248,177,70,0.15)] group-hover:scale-105 transition-transform duration-300"
               />

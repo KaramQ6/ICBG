@@ -117,7 +117,7 @@ export default function Navbar({ onOpenAdmin, currentView }) {
         className="flex items-center gap-2 cursor-pointer group"
       >
         <img 
-          src="/assets/images/logo.png" 
+          src="/assets/images/IBGC logos.svg" 
           alt="ICBG Logo" 
           className={`w-10 h-10 object-contain filter drop-shadow-[0_0_8px_rgba(201,168,76,0.25)] transition-all duration-300 ${
             isSpinning ? 'logo-die-spin' : 'group-hover:scale-105'
