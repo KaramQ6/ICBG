@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
-import { Lock, Unlock, X, Plus, Calendar, Save, Search, Check, Sparkles, Film, Play, Eye, Image as ImageIcon, Trash2, Pencil, Dices } from 'lucide-react';
+import { Lock, Unlock, X, Plus, Calendar, Save, Search, Check, Sparkles, Film, Play, Eye, Image as ImageIcon, Trash2, Pencil, Dices, Upload, Loader2 } from 'lucide-react';
 
 export default function AdminPanel({ isOpen, onClose, games, onAddGame, schedule, onUpdateSchedule, galleryImages, onAddGalleryImage, onRemoveGalleryImage, onUpdateGalleryImage }) {
   const [passcode, setPasscode] = useState('');
@@ -27,7 +27,14 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, schedule
   const [newGameExpansion, setNewGameExpansion] = useState('None');
   const [newGameHowToPlay, setNewGameHowToPlay] = useState('');
   const [newGameQuickSummary, setNewGameQuickSummary] = useState('');
+  const [newGameBoxImg, setNewGameBoxImg] = useState('');
   const [formSuccess, setFormSuccess] = useState('');
+
+  // Media upload states
+  const [isUploadingGame, setIsUploadingGame] = useState(false);
+  const [isUploadingGallery, setIsUploadingGallery] = useState(false);
+  const [gameUploadError, setGameUploadError] = useState('');
+  const [galleryUploadError, setGalleryUploadError] = useState('');
 
   // Gallery form state
   const [galleryUrl, setGalleryUrl] = useState('');
@@ -126,6 +133,70 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, schedule
     }
   };
 
+  // Supabase Storage Generic File Upload Helper
+  const uploadMedia = async (file, pathPrefix) => {
+    if (!isSupabaseConfigured) {
+      throw new Error("Supabase connection is not configured in .env file.");
+    }
+
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
+    const filePath = `${pathPrefix}/${fileName}`;
+
+    // Upload to 'icbg-media' bucket
+    const { data, error } = await supabase.storage
+      .from('icbg-media')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (error) throw error;
+
+    // Get public loading URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('icbg-media')
+      .getPublicUrl(filePath);
+
+    return publicUrl;
+  };
+
+  const handleGameImageFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setIsUploadingGame(true);
+    setGameUploadError('');
+
+    try {
+      const publicUrl = await uploadMedia(file, 'games');
+      setNewGameBoxImg(publicUrl);
+    } catch (err) {
+      console.error("Game image upload error:", err);
+      setGameUploadError(err.message || 'Failed to upload image file.');
+    } finally {
+      setIsUploadingGame(false);
+    }
+  };
+
+  const handleGalleryImageFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setIsUploadingGallery(true);
+    setGalleryUploadError('');
+
+    try {
+      const publicUrl = await uploadMedia(file, 'gallery');
+      setGalleryUrl(publicUrl);
+    } catch (err) {
+      console.error("Gallery image upload error:", err);
+      setGalleryUploadError(err.message || 'Failed to upload image file.');
+    } finally {
+      setIsUploadingGallery(false);
+    }
+  };
+
   const handleAuthSubmit = (e) => {
     e.preventDefault();
     // Base64 obfuscated passcode check matching '1983'
@@ -176,7 +247,7 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, schedule
       time: newGameTime || '30-45 Min',
       year: newGameYear || new Date().getFullYear().toString(),
       expansion: newGameExpansion || 'None',
-      box_img: '', // monogram fallback
+      box_img: newGameBoxImg || '', // uploads fallback
       box_link: '',
       play_img: '',
       play_link: '',
@@ -197,6 +268,7 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, schedule
     setNewGameExpansion('None');
     setNewGameHowToPlay('');
     setNewGameQuickSummary('');
+    setNewGameBoxImg('');
 
     setTimeout(() => setFormSuccess(''), 3000);
   };
@@ -590,6 +662,70 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, schedule
                         className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
                       />
                     </div>
+
+                    {/* Game Box Image Upload */}
+                    <div className="flex flex-col gap-2 col-span-1 md:col-span-2 border-t border-white/10 pt-4 mt-2">
+                      <label className="font-mono text-[9px] flex items-center gap-1 uppercase tracking-wider text-[#C8B1CC]/80">
+                        <ImageIcon size={10} className="text-[#f8b146]" /> Game Cover Image (Direct Upload to Supabase Bucket)
+                      </label>
+                      <div className="flex flex-col sm:flex-row gap-4 items-center bg-[#25102a]/40 border border-white/10 p-4 rounded-2xl">
+                        <div className="flex-1 w-full text-left">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleGameImageFileChange}
+                            disabled={isUploadingGame}
+                            className="hidden"
+                            id="game-image-upload"
+                          />
+                          <label
+                            htmlFor="game-image-upload"
+                            className={`flex items-center justify-center gap-2 py-3 px-6 rounded-xl border border-dashed transition-all duration-300 cursor-pointer font-sans text-xs font-semibold text-center ${
+                              isUploadingGame
+                                ? 'bg-white/5 border-white/10 text-white/40 cursor-not-allowed'
+                                : 'bg-[#f8b146]/5 border-[#f8b146]/30 text-[#f8b146] hover:bg-[#f8b146]/10 hover:border-[#f8b146]/50 shadow-sm shadow-[#f8b146]/5'
+                            }`}
+                          >
+                            {isUploadingGame ? (
+                              <>
+                                <Loader2 size={14} className="animate-spin text-[#f8b146]" />
+                                Uploading to Public Bucket...
+                              </>
+                            ) : (
+                              <>
+                                <Upload size={14} />
+                                Choose Image File
+                              </>
+                            )}
+                          </label>
+                          {gameUploadError && (
+                            <p className="text-[10px] text-red-400 mt-2 font-sans">{gameUploadError}</p>
+                          )}
+                          <p className="text-[10px] text-[#C8B1CC]/60 mt-2 font-sans leading-normal">
+                            Directly uploads high-res assets to your secure Supabase public bucket. Supports JPG, PNG, WEBP.
+                          </p>
+                        </div>
+                        {newGameBoxImg ? (
+                          <div className="w-24 h-24 rounded-xl overflow-hidden border border-white/15 bg-cover bg-center shrink-0 shadow-inner relative group" style={{ backgroundImage: `url(${newGameBoxImg})` }}>
+                            <div className="absolute inset-0 bg-[#25102a]/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                              <button
+                                type="button"
+                                onClick={() => setNewGameBoxImg('')}
+                                className="p-1.5 rounded-full bg-red-500/20 border border-red-500/30 text-red-400 hover:bg-red-500/30 transition-all cursor-pointer"
+                                title="Remove Image"
+                              >
+                                <X size={12} />
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="w-24 h-24 rounded-xl border border-dashed border-white/10 flex flex-col items-center justify-center text-white/20 shrink-0 bg-[#25102a]/30">
+                            <ImageIcon size={20} />
+                            <span className="text-[9px] mt-1 font-mono uppercase tracking-wider">No Image</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
 
                   {/* Form Submission Button */}
@@ -612,15 +748,54 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, schedule
                     </h4>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="flex flex-col gap-2">
-                        <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Image URL *</label>
-                        <input
-                          type="url"
-                          value={galleryUrl}
-                          onChange={(e) => setGalleryUrl(e.target.value)}
-                          placeholder="https://example.com/photo.jpg"
-                          className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
-                        />
+                      <div className="flex flex-col gap-2 col-span-1 md:col-span-2 bg-[#25102a]/40 border border-white/10 p-4 rounded-2xl">
+                        <label className="font-mono text-[9px] flex items-center gap-1 uppercase tracking-wider text-[#C8B1CC]/80">
+                          <Upload size={10} className="text-[#f8b146]" /> Gallery Photo File Upload
+                        </label>
+                        <div className="flex flex-col sm:flex-row gap-4 items-center w-full">
+                          <div className="flex-1 w-full text-left">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={handleGalleryImageFileChange}
+                              disabled={isUploadingGallery}
+                              className="hidden"
+                              id="gallery-image-upload"
+                            />
+                            <label
+                              htmlFor="gallery-image-upload"
+                              className={`flex items-center justify-center gap-2 py-3 px-6 rounded-xl border border-dashed transition-all duration-300 cursor-pointer font-sans text-xs font-semibold text-center ${
+                                isUploadingGallery
+                                  ? 'bg-white/5 border-white/10 text-white/40 cursor-not-allowed'
+                                  : 'bg-[#f8b146]/5 border-[#f8b146]/30 text-[#f8b146] hover:bg-[#f8b146]/10 hover:border-[#f8b146]/50 shadow-sm shadow-[#f8b146]/5'
+                              }`}
+                            >
+                              {isUploadingGallery ? (
+                                <>
+                                  <Loader2 size={14} className="animate-spin text-[#f8b146]" />
+                                  Uploading to Bucket...
+                                </>
+                              ) : (
+                                <>
+                                  <Upload size={14} />
+                                  Select Photo File
+                                </>
+                              )}
+                            </label>
+                            {galleryUploadError && (
+                              <p className="text-[10px] text-red-400 mt-2 font-sans">{galleryUploadError}</p>
+                            )}
+                          </div>
+                          <div className="w-full sm:w-auto flex-1">
+                            <input
+                              type="url"
+                              value={galleryUrl}
+                              onChange={(e) => setGalleryUrl(e.target.value)}
+                              placeholder="Or paste an external Image URL instead..."
+                              className="w-full py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
+                            />
+                          </div>
+                        </div>
                       </div>
                       
                       <div className="flex flex-col gap-2">
