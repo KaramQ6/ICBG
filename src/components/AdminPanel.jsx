@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import { Lock, Unlock, X, Plus, Calendar, Save, Search, Check, Sparkles, Film, Play, Eye, Image as ImageIcon, Trash2, Pencil, Dices } from 'lucide-react';
 
 export default function AdminPanel({ isOpen, onClose, games, onAddGame, schedule, onUpdateSchedule, galleryImages, onAddGalleryImage, onRemoveGalleryImage, onUpdateGalleryImage }) {
@@ -76,13 +77,40 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, schedule
 
   // Fetch applications when panel is open or tab changes
   useEffect(() => {
-    if (isOpen) {
+    const fetchApplicants = async () => {
+      if (isSupabaseConfigured) {
+        try {
+          const { data, error } = await supabase.from('applications').select('*').order('created_at', { ascending: false });
+          if (error) throw error;
+          if (data) {
+            // Map keys back
+            const mapped = data.map(item => ({
+              id: item.id,
+              fullName: item.full_name,
+              email: item.email,
+              phone: item.phone,
+              gameTypes: item.game_types,
+              date: item.created_at
+            }));
+            setApplicantsList(mapped);
+            return;
+          }
+        } catch (e) {
+          console.warn("Failed to fetch applications from Supabase, falling back to local storage:", e);
+        }
+      }
+
+      // Fallback
       try {
         const stored = localStorage.getItem('icbg_applications');
         setApplicantsList(stored ? JSON.parse(stored) : []);
       } catch (e) {
         console.warn("Failed to parse applications from localStorage:", e);
       }
+    };
+
+    if (isOpen) {
+      fetchApplicants();
     }
   }, [isOpen, activeTab]);
 
@@ -784,12 +812,21 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, schedule
                     </div>
                     {applicantsList && applicantsList.length > 0 && (
                       <button
-                        onClick={() => {
+                        onClick={async () => {
                           if (confirm("Are you sure you want to clear all applications?")) {
                             localStorage.removeItem('icbg_applications');
                             setApplicantsList([]);
-                            setFormSuccess('All applications cleared.');
+                            setFormSuccess('All applications cleared successfully.');
                             setTimeout(() => setFormSuccess(''), 3000);
+
+                            if (isSupabaseConfigured) {
+                              try {
+                                const { error } = await supabase.from('applications').delete().gt('id', 0);
+                                if (error) throw error;
+                              } catch (e) {
+                                console.error("Failed to clear applications in Supabase:", e);
+                              }
+                            }
                           }
                         }}
                         className="py-2 px-4 rounded-xl border border-red-500/30 text-red-400 hover:bg-red-500/10 font-mono text-[9px] uppercase tracking-wider transition-all cursor-pointer inline-flex items-center gap-1.5"
@@ -829,12 +866,21 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, schedule
                           </div>
                           
                           <button
-                            onClick={() => {
+                            onClick={async () => {
                               const updated = applicantsList.filter(item => item.id !== app.id);
                               localStorage.setItem('icbg_applications', JSON.stringify(updated));
                               setApplicantsList(updated);
                               setFormSuccess(`Removed application from "${app.fullName}"`);
                               setTimeout(() => setFormSuccess(''), 3000);
+
+                              if (isSupabaseConfigured) {
+                                try {
+                                  const { error } = await supabase.from('applications').delete().eq('id', app.id);
+                                  if (error) throw error;
+                                } catch (e) {
+                                  console.error("Failed to delete application in Supabase:", e);
+                                }
+                              }
                             }}
                             className="p-3.5 rounded-2xl border border-white/10 hover:border-red-500/40 text-white/60 hover:text-red-400 bg-white/5 hover:bg-red-500/5 transition-all duration-300 flex items-center justify-center cursor-pointer shrink-0 md:self-center"
                             title="Dismiss Application"

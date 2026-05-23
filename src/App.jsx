@@ -35,21 +35,11 @@ export default function App() {
   const [isTableFlipped, setIsTableFlipped] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
 
-  // Admin-added games (stored in localStorage, separate from base JSON)
-  const [extraGames, setExtraGames] = useState(() => {
-    try {
-      const stored = localStorage.getItem('icbg_extra_games');
-      return stored ? JSON.parse(stored) : [];
-    } catch { return []; }
-  });
+  // Admin-added games (synced with Supabase)
+  const [extraGames, setExtraGames] = useState([]);
 
   // Schedule state
-  const [schedule, setSchedule] = useState(() => {
-    try {
-      const stored = localStorage.getItem('icbg_weekly_schedule');
-      return stored ? JSON.parse(stored) : DEFAULT_SCHEDULE;
-    } catch { return DEFAULT_SCHEDULE; }
-  });
+  const [schedule, setSchedule] = useState(DEFAULT_SCHEDULE);
 
   // SPA Custom Routing State
   const [currentView, setCurrentView] = useState(() => {
@@ -174,13 +164,8 @@ export default function App() {
     }
   }, [isGamingMode]);
 
-  // Gallery images (stored in localStorage, initialized with defaults)
-  const [galleryImages, setGalleryImages] = useState(() => {
-    try {
-      const stored = localStorage.getItem('icbg_gallery_images');
-      return stored ? JSON.parse(stored) : DEFAULT_IMAGES;
-    } catch { return DEFAULT_IMAGES; }
-  });
+  // Gallery images (synced with Supabase)
+  const [galleryImages, setGalleryImages] = useState(DEFAULT_IMAGES);
 
   // Fetch routines for Supabase
   const fetchGames = async () => {
@@ -260,15 +245,6 @@ export default function App() {
     }
   }, []);
 
-  // Safe helper to write to localStorage to prevent quota and incognito crashes
-  const safeSetItem = (key, value) => {
-    try {
-      localStorage.setItem(key, value);
-    } catch (e) {
-      console.warn("Failed to write to localStorage:", e);
-    }
-  };
-
   // All games = base JSON + admin-added
   const allGames = [...extraGames, ...gamesData];
 
@@ -276,7 +252,6 @@ export default function App() {
   const handleAddGame = async (newGame) => {
     const updated = [newGame, ...extraGames];
     setExtraGames(updated);
-    safeSetItem('icbg_extra_games', JSON.stringify(updated));
 
     if (isSupabaseConfigured) {
       try {
@@ -307,7 +282,6 @@ export default function App() {
   // Handler to update the weekly campaign schedule
   const handleUpdateSchedule = async (newSchedule) => {
     setSchedule(newSchedule);
-    safeSetItem('icbg_weekly_schedule', JSON.stringify(newSchedule));
 
     if (isSupabaseConfigured) {
       try {
@@ -330,7 +304,6 @@ export default function App() {
   const handleAddGalleryImage = async (newImage) => {
     const updated = [...galleryImages, newImage];
     setGalleryImages(updated);
-    safeSetItem('icbg_gallery_images', JSON.stringify(updated));
 
     if (isSupabaseConfigured) {
       try {
@@ -354,7 +327,6 @@ export default function App() {
     const imgToRemove = galleryImages[index];
     const updated = galleryImages.filter((_, i) => i !== index);
     setGalleryImages(updated);
-    safeSetItem('icbg_gallery_images', JSON.stringify(updated));
 
     if (isSupabaseConfigured) {
       try {
@@ -375,7 +347,6 @@ export default function App() {
   const handleUpdateGalleryImage = async (index, updatedImage) => {
     const updated = galleryImages.map((img, i) => i === index ? updatedImage : img);
     setGalleryImages(updated);
-    safeSetItem('icbg_gallery_images', JSON.stringify(updated));
 
     if (isSupabaseConfigured) {
       try {
