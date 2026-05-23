@@ -200,7 +200,7 @@ export default function App() {
 
   const fetchSchedule = async () => {
     try {
-      const { data, error } = await supabase.from('weekly_schedule').select('*').eq('id', 1).single();
+      const { data, error } = await supabase.from('weekly_schedule').select('*').eq('id', 1).maybeSingle();
       if (error) throw error;
       if (data) {
         setSchedule({

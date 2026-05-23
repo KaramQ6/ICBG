@@ -73,17 +73,16 @@ export default function Navbar({ onOpenAdmin, currentView }) {
     }
     
     // 2. Admin rapid-clicks handler (5 clicks)
-    setClickCount(prev => {
-      const next = prev + 1;
-      if (next >= 5) {
-        if (onOpenAdmin) onOpenAdmin();
-        if (clickTimer.current) clearTimeout(clickTimer.current);
-        return 0;
-      }
+    const nextCount = clickCount + 1;
+    if (nextCount >= 5) {
+      if (onOpenAdmin) onOpenAdmin();
+      if (clickTimer.current) clearTimeout(clickTimer.current);
+      setClickCount(0);
+    } else {
+      setClickCount(nextCount);
       if (clickTimer.current) clearTimeout(clickTimer.current);
       clickTimer.current = setTimeout(() => setClickCount(0), 1500);
-      return next;
-    });
+    }
   };
 
   const scrollToSection = (id) => {
