@@ -1,0 +1,15 @@
+# Netlify Deployment Configuration for ICBG
+# Automates the build and folder routing settings directly from your GitHub repository.
+
+[build]
+  # The build command to compile the React/Vite production package
+  command = "npm run build"
+  
+  # The output folder created by Vite that contains the production files
+  publish = "dist"
+
+[[redirects]]
+  # Redirects all traffic to index.html for Single Page Application (SPA) routing support
+  from = "/*"
+  to = "/index.html"
+  status = 200
