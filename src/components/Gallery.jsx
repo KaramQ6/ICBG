@@ -82,9 +82,11 @@ function GalleryImage({ src, title, category }) {
   );
 }
 
-export default function Gallery({ images = DEFAULT_IMAGES }) {
+export default function Gallery({ images = DEFAULT_IMAGES, schedule }) {
+  const locationName = schedule?.locationName || "Cortina.D Cafe";
   // Use passed images, fallback if empty
   const allImages = images && images.length > 0 ? images : DEFAULT_IMAGES;
+
 
   return (
     <section
@@ -133,8 +135,9 @@ export default function Gallery({ images = DEFAULT_IMAGES }) {
                     {img.desc}
                   </p>
                   <div className="flex items-center gap-1.5 mt-4 text-[10px] font-mono text-[#f8b146]/70">
-                    <MapPin size={10} className="text-[#f8b146]" /> Cortina.D Cafe, Irbid
+                    <MapPin size={10} className="text-[#f8b146]" /> {locationName}
                   </div>
+
                 </div>
               </div>
             ))}

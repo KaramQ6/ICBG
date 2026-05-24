@@ -2,7 +2,11 @@ import React from 'react';
 import { Calendar, MapPin, Sparkles, Play, BookOpen, MessageSquare } from 'lucide-react';
 
 export default function WeeklySpotlight({ schedule, games, onScrollToCollection }) {
+  const locationName = schedule?.locationName || "Cortina.D Cafe";
+  const locationLink = schedule?.locationLink || "https://maps.app.goo.gl/R6WFBay7Piyfoe1w9?g_st=ic";
+
   // Find featured game objects from the games vault safely
+
   const featuredGames = (schedule.featuredGameTitles || [])
     .filter(title => typeof title === 'string' && title.trim())
     .map(title => {
@@ -40,7 +44,7 @@ export default function WeeklySpotlight({ schedule, games, onScrollToCollection 
               Weekly <span className="font-serif italic font-normal bg-gradient-to-r from-[#f8b146] to-[#f28a75] bg-clip-text text-transparent">Spotlight</span>
             </h2>
             <p className="font-sans font-light text-sm text-[#C8B1CC] max-w-xl mt-3 leading-relaxed">
-              Every week, we gather at Cortina.D Cafe to test our wits, forge connections, and master new strategies. Here is what's hitting the table next.
+              Every week, we gather at {locationName} to test our wits, forge connections, and master new strategies. Here is what's hitting the table next.
             </p>
           </div>
           
@@ -75,10 +79,13 @@ export default function WeeklySpotlight({ schedule, games, onScrollToCollection 
                       <MapPin size={18} className="text-[#f8b146]" />
                     </div>
                     <div className="text-left">
-                      <span className="font-sans font-semibold text-sm text-white block">Cortina.D Cafe</span>
-                      <span className="font-sans text-xs text-[#C8B1CC]">University Street, Irbid, Jordan</span>
+                      <span className="font-sans font-semibold text-sm text-white block">{locationName}</span>
+                      <span className="font-sans text-xs text-[#C8B1CC]">
+                        {locationName === "Cortina.D Cafe" ? "University Street, Irbid, Jordan" : "Click below for map details"}
+                      </span>
                     </div>
                   </div>
+
 
                   {/* Thursday Info */}
                   <div className="flex items-start gap-4">
@@ -116,13 +123,14 @@ export default function WeeklySpotlight({ schedule, games, onScrollToCollection 
                 </a>
                 
                 <a
-                  href="https://maps.app.goo.gl/R6WFBay7Piyfoe1w9?g_st=ic"
+                  href={locationLink}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-[#25102a]/45 border border-white/10 text-white hover:border-[#f8b146] hover:text-[#f8b146] rounded-full font-sans font-semibold text-xs tracking-wider transition-all duration-300 shadow-sm"
                 >
                   Google Maps Location
                 </a>
+
               </div>
             </div>
           </div>

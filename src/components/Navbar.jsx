@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Sparkles, MapPin, Menu, X } from 'lucide-react';
 
-export default function Navbar({ onOpenAdmin, currentView }) {
+export default function Navbar({ onOpenAdmin, currentView, schedule }) {
+  const locationName = schedule?.locationName || "Cortina.D Cafe";
+  const locationLink = schedule?.locationLink || "https://maps.app.goo.gl/R6WFBay7Piyfoe1w9?g_st=ic";
   const [scrolled, setScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -88,8 +91,10 @@ export default function Navbar({ onOpenAdmin, currentView }) {
   const scrollToSection = (id) => {
     if (id === 'collection') {
       window.location.hash = '#/collection';
+    } else if (id === 'gallery') {
+      window.location.hash = '#/gallery';
     } else {
-      if (currentView === 'collection') {
+      if (currentView === 'collection' || currentView === 'gallery') {
         window.location.hash = `#/${id}`;
       } else {
         const element = document.getElementById(id);
@@ -144,13 +149,13 @@ export default function Navbar({ onOpenAdmin, currentView }) {
       {/* Action CTA Buttons */}
       <div className="flex items-center gap-2 md:gap-3">
         <a
-          href="https://maps.app.goo.gl/R6WFBay7Piyfoe1w9?g_st=ic"
+          href={locationLink}
           target="_blank"
           rel="noopener noreferrer"
           className="hidden lg:flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-[#C8B1CC] hover:text-[#f8b146] transition-colors duration-300"
         >
           <MapPin size={12} className="text-[#f8b146]" />
-          Cortina.D Cafe
+          {locationName}
         </a>
         <button
           onClick={() => scrollToSection('join')}
@@ -184,17 +189,18 @@ export default function Navbar({ onOpenAdmin, currentView }) {
             </button>
           ))}
           <a
-            href="https://maps.app.goo.gl/R6WFBay7Piyfoe1w9?g_st=ic"
+            href={locationLink}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setIsMobileMenuOpen(false)}
             className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest text-[#C8B1CC] hover:text-[#f8b146] py-1.5 px-4"
           >
             <MapPin size={12} className="text-[#f8b146]" />
-            Cortina.D Cafe (Irbid)
+            {locationName}
           </a>
         </div>
       )}
+
 
       {/* Monospace Initiative Toast notification at the bottom corner */}
       {toast && (

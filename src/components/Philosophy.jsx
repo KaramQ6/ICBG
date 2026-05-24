@@ -5,8 +5,10 @@ import { Quote, Compass, Calendar, Coffee } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function Philosophy({ onTriggerMeepleRain }) {
+export default function Philosophy({ onTriggerMeepleRain, schedule }) {
+  const locationName = schedule?.locationName || "Cortina.D Cafe";
   const containerRef = useRef(null);
+
   const leftTextRef = useRef(null);
   const rightTextRef = useRef(null);
 
@@ -133,8 +135,9 @@ export default function Philosophy({ onTriggerMeepleRain }) {
               </div>
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#25102a]/60 border border-[#f8b146]/30 shadow-sm">
                 <Coffee size={12} className="text-[#f8b146]" />
-                <span className="font-mono text-[9px] uppercase tracking-wider text-white font-semibold">Cortina.D Cafe</span>
+                <span className="font-mono text-[9px] uppercase tracking-wider text-white font-semibold">{locationName}</span>
               </div>
+
             </div>
           </div>
 

@@ -2,8 +2,10 @@ import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ChevronDown, Calendar, Users, Target } from 'lucide-react';
 
-export default function Hero() {
+export default function Hero({ schedule }) {
+  const locationName = schedule?.locationName || "Cortina.D Cafe";
   const containerRef = useRef(null);
+
   const title1Ref = useRef(null);
   const title2Ref = useRef(null);
   const title3Ref = useRef(null);
@@ -60,7 +62,7 @@ export default function Hero() {
   return (
     <section
       ref={containerRef}
-      className="relative w-full h-[100dvh] min-h-[600px] overflow-hidden flex items-end justify-start bg-[#4a2b53]"
+      className="relative w-full min-h-[100dvh] lg:h-[100dvh] overflow-hidden flex flex-col justify-end bg-[#4a2b53] pt-28 pb-16 md:pb-24"
     >
       {/* Background Image Container */}
       <div className="absolute inset-0 w-full h-full overflow-hidden">
@@ -74,7 +76,7 @@ export default function Hero() {
       </div>
 
       {/* Hero Content - Occupies Bottom-Left Third */}
-      <div className="relative z-20 w-full max-w-7xl mx-auto px-6 md:px-12 pb-16 md:pb-24 flex flex-col items-start">
+      <div className="relative z-20 w-full max-w-7xl mx-auto px-6 md:px-12 mt-auto flex flex-col items-start">
         
         {/* Subtle Badge */}
         <div 
@@ -102,7 +104,7 @@ export default function Hero() {
           ref={descRef}
           className="mt-6 font-sans text-base md:text-lg text-[#C8B1CC] max-w-xl text-left font-light leading-relaxed"
         >
-          Every Thursday & Friday night at Cortina.D Cafe, Irbid. 
+          Every Thursday & Friday night at {locationName}. 
           A curated private members' gathering dedicated to deep strategic gameplay, 
           unrivaled camaraderie, and the art of tabletop mastery.
         </p>
@@ -110,7 +112,7 @@ export default function Hero() {
         {/* Live Quick Info Panel */}
         <div 
           ref={statsRef}
-          className="mt-8 flex flex-wrap gap-x-8 gap-y-4 py-6 border-t border-b border-white/10 w-full max-w-xl"
+          className="mt-6 md:mt-8 flex flex-wrap gap-x-6 md:gap-x-8 gap-y-3 md:gap-y-4 py-4 md:py-6 border-t border-b border-white/10 w-full max-w-xl"
         >
           <div className="flex items-center gap-3">
             <Calendar size={18} className="text-gold-logo" />
@@ -132,13 +134,14 @@ export default function Hero() {
             <Target size={18} className="text-gold-logo" />
             <div>
               <p className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/60">Location</p>
-              <p className="font-sans text-xs font-semibold text-white">Cortina.D Cafe</p>
+              <p className="font-sans text-xs font-semibold text-white">{locationName}</p>
             </div>
           </div>
         </div>
 
+
         {/* CTA scroll down */}
-        <div ref={ctaRef} className="mt-10 flex items-center gap-4">
+        <div ref={ctaRef} className="mt-6 md:mt-10 flex items-center gap-4">
           <button
             onClick={scrollToCollection}
             className="group relative px-8 py-4 bg-gradient-to-r from-[#f8b146] to-[#f28a75] text-[#3a1d42] font-sans font-black text-xs uppercase tracking-widest rounded-full shadow-xl shadow-[#f8b146]/15 hover:scale-[1.05] hover:shadow-[0_0_35px_rgba(248,177,70,0.3)] animate-float transition-all duration-300 ease-out cursor-pointer"

@@ -15,6 +15,9 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
   const [fridayDate, setFridayDate] = useState('');
   const [featuredTitles, setFeaturedTitles] = useState([]);
   const [gameSearch, setGameSearch] = useState('');
+  const [locationName, setLocationName] = useState('');
+  const [locationLink, setLocationLink] = useState('');
+
 
   // Add Game form state
   const [newGameTitle, setNewGameTitle] = useState('');
@@ -164,6 +167,8 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
       setThursdayDate(schedule.thursdayDate || '');
       setFridayDate(schedule.fridayDate || '');
       setFeaturedTitles(schedule.featuredGameTitles || []);
+      setLocationName(schedule.locationName || 'Cortina.D Cafe');
+      setLocationLink(schedule.locationLink || 'https://maps.app.goo.gl/R6WFBay7Piyfoe1w9?g_st=ic');
       setFormSuccess('');
     } else {
       // Reset auth when panel closes so passcode is required again
@@ -174,6 +179,7 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
       setEditingGame(null);
     }
   }, [isOpen, schedule]);
+
 
   // Fetch applications when panel is open or tab changes
   useEffect(() => {
@@ -308,11 +314,14 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
       nextHangout,
       thursdayDate,
       fridayDate,
-      featuredGameTitles: featuredTitles
+      featuredGameTitles: featuredTitles,
+      locationName,
+      locationLink
     });
     setFormSuccess('Weekly campaign schedule updated successfully!');
     setTimeout(() => setFormSuccess(''), 3000);
   };
+
 
   const handleAddGameSubmit = (e) => {
     e.preventDefault();
@@ -564,6 +573,36 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
                       />
                     </div>
                   </div>
+
+                  {/* Location Configuration Row */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-white/10 pt-6">
+                    {/* Location Name Input */}
+                    <div className="flex flex-col gap-2">
+                      <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Gathering Location Name</label>
+                      <input
+                        type="text"
+                        value={locationName}
+                        onChange={(e) => setLocationName(e.target.value)}
+                        placeholder="e.g. Cortina.D Cafe"
+                        className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
+                        required
+                      />
+                    </div>
+
+                    {/* Location Google Maps Link Input */}
+                    <div className="flex flex-col gap-2">
+                      <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Google Maps Location Link</label>
+                      <input
+                        type="url"
+                        value={locationLink}
+                        onChange={(e) => setLocationLink(e.target.value)}
+                        placeholder="e.g. https://maps.app.goo.gl/..."
+                        className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
+                        required
+                      />
+                    </div>
+                  </div>
+
 
                   {/* Featured Games Selection (Checklist) */}
                   <div className="border-t border-white/10 pt-6 flex flex-col gap-3">

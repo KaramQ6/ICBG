@@ -1,8 +1,11 @@
 import React from 'react';
 import { Calendar, Heart, Shield, Sparkles, MapPin, Sheet, TableProperties } from 'lucide-react';
 
-export default function Footer({ onTriggerJenga, onOpenDisputes }) {
+export default function Footer({ onTriggerJenga, onOpenDisputes, schedule }) {
+  const locationName = schedule?.locationName || "Cortina.D Cafe";
+  const locationLink = schedule?.locationLink || "https://maps.app.goo.gl/R6WFBay7Piyfoe1w9?g_st=ic";
   const currentYear = new Date().getFullYear();
+
   
   // Secret triple click on the year "1983" triggers the cascading Jenga Easter Egg
   const clickTimes = React.useRef([]);
@@ -53,7 +56,7 @@ export default function Footer({ onTriggerJenga, onOpenDisputes }) {
             </p>
             <div className="flex items-center gap-2 text-xs font-mono text-[#C8B1CC]/70">
               <MapPin size={12} className="text-[#f8b146]" />
-              <span>Cortina.D Cafe, Irbid, Jordan</span>
+              <span>{locationName}</span>
             </div>
           </div>
 
@@ -73,15 +76,16 @@ export default function Footer({ onTriggerJenga, onOpenDisputes }) {
                 </button>
               ))}
               <a
-                href="https://maps.app.goo.gl/R6WFBay7Piyfoe1w9?g_st=ic"
+                href={locationLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-sans text-sm text-[#C8B1CC] hover:text-[#f8b146] hover:translate-x-1 transition-all duration-300 flex items-center gap-1.5"
               >
-                Cortina.D Cafe <MapPin size={12} className="text-[#f8b146]" />
+                {locationName} <MapPin size={12} className="text-[#f8b146]" />
               </a>
             </div>
           </div>
+
 
           {/* Column 3: Google Drive Databases */}
           <div className="flex flex-col items-start text-left">

@@ -5,8 +5,9 @@ import Hero from './components/Hero';
 import Philosophy from './components/Philosophy';
 import WeeklySpotlight from './components/WeeklySpotlight';
 import Collection from './components/Collection';
-import CollectionTeaser from './components/CollectionTeaser';
 import Gallery, { DEFAULT_IMAGES } from './components/Gallery';
+import InteractiveBentoGallery from './components/ui/interactive-bento-gallery';
+import { Image as ImageIcon } from 'lucide-react';
 import JoinForm from './components/JoinForm';
 import Footer from './components/Footer';
 import AdminPanel from './components/AdminPanel';
@@ -23,8 +24,11 @@ const DEFAULT_SCHEDULE = {
   nextHangout: "Friday, 22/5/2026 7:30 PM",
   thursdayDate: "28/5/26 7:00 PM",
   fridayDate: "22/5/26 7:00 PM",
-  featuredGameTitles: ["Hellapagos", "Outsmarted!", "7 Wonders", "Cascadia"]
+  featuredGameTitles: ["Hellapagos", "Outsmarted!", "7 Wonders", "Cascadia"],
+  locationName: "Cortina.D Cafe",
+  locationLink: "https://maps.app.goo.gl/R6WFBay7Piyfoe1w9?g_st=ic"
 };
+
 
 export default function App() {
   // Easter Egg & Admin States
@@ -44,7 +48,9 @@ export default function App() {
   // SPA Custom Routing State
   const [currentView, setCurrentView] = useState(() => {
     const hash = window.location.hash;
-    return hash === '#/collection' || hash === '#collection' ? 'collection' : 'home';
+    if (hash === '#/collection' || hash === '#collection') return 'collection';
+    if (hash === '#/gallery' || hash === '#gallery') return 'gallery';
+    return 'home';
   });
 
   useEffect(() => {
@@ -52,6 +58,9 @@ export default function App() {
       const hash = window.location.hash;
       if (hash === '#/collection' || hash === '#collection') {
         setCurrentView('collection');
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      } else if (hash === '#/gallery' || hash === '#gallery') {
+        setCurrentView('gallery');
         window.scrollTo({ top: 0, behavior: 'instant' });
       } else {
         setCurrentView('home');
@@ -221,17 +230,34 @@ export default function App() {
       const { data, error } = await supabase.from('weekly_schedule').select('*').eq('id', 1).maybeSingle();
       if (error) throw error;
       if (data) {
-        setSchedule({
+        const fetched = {
           nextHangout: data.next_hangout,
           thursdayDate: data.thursday_date,
           fridayDate: data.friday_date,
-          featuredGameTitles: data.featured_game_titles
-        });
+          featuredGameTitles: data.featured_game_titles,
+          locationName: data.location_name || "Cortina.D Cafe",
+          locationLink: data.location_link || "https://maps.app.goo.gl/R6WFBay7Piyfoe1w9?g_st=ic"
+        };
+        setSchedule(fetched);
+        try {
+          localStorage.setItem('ibgc_schedule', JSON.stringify(fetched));
+        } catch (err) {
+          console.warn("Failed to save schedule to localStorage:", err);
+        }
       }
     } catch (e) {
       console.warn("Failed to fetch schedule from Supabase, falling back to local storage:", e);
+      try {
+        const stored = localStorage.getItem('ibgc_schedule');
+        if (stored) {
+          setSchedule(JSON.parse(stored));
+        }
+      } catch (err) {
+        console.warn("Failed to retrieve schedule from localStorage:", err);
+      }
     }
   };
+
 
   const fetchGallery = async () => {
     try {
@@ -261,11 +287,23 @@ export default function App() {
   // Sync with Supabase on mount
   useEffect(() => {
     fetchGames(); // Always run so it checks Supabase first and then falls back to localStorage
+    
+    // Check localStorage for cached schedule first as a fast load
+    try {
+      const cached = localStorage.getItem('ibgc_schedule');
+      if (cached) {
+        setSchedule(JSON.parse(cached));
+      }
+    } catch (e) {
+      console.warn("Failed to parse schedule from localStorage:", e);
+    }
+
     if (isSupabaseConfigured) {
       fetchSchedule();
       fetchGallery();
     }
   }, []);
+
 
   // All games = base JSON merged with admin-added overrides and new games
   const allGames = React.useMemo(() => {
@@ -463,22 +501,45 @@ export default function App() {
   const handleUpdateSchedule = async (newSchedule) => {
     setSchedule(newSchedule);
 
+    try {
+      localStorage.setItem('ibgc_schedule', JSON.stringify(newSchedule));
+    } catch (e) {
+      console.warn("Failed to cache schedule in localStorage:", e);
+    }
+
     if (isSupabaseConfigured) {
       try {
+        // Attempt full update including new location columns
         const { error } = await supabase.from('weekly_schedule').upsert({
           id: 1,
           next_hangout: newSchedule.nextHangout,
           thursday_date: newSchedule.thursdayDate,
           friday_date: newSchedule.fridayDate,
           featured_game_titles: newSchedule.featuredGameTitles,
+          location_name: newSchedule.locationName,
+          location_link: newSchedule.locationLink,
           updated_at: new Date().toISOString()
         });
-        if (error) throw error;
+        
+        if (error) {
+          console.warn("Supabase upsert failed with location columns, trying fallback without location columns:", error);
+          // Fallback to update without new location columns
+          const { error: fallbackError } = await supabase.from('weekly_schedule').upsert({
+            id: 1,
+            next_hangout: newSchedule.nextHangout,
+            thursday_date: newSchedule.thursdayDate,
+            friday_date: newSchedule.fridayDate,
+            featured_game_titles: newSchedule.featuredGameTitles,
+            updated_at: new Date().toISOString()
+          });
+          if (fallbackError) throw fallbackError;
+        }
       } catch (e) {
         console.error("Supabase handleUpdateSchedule error:", e);
       }
     }
   };
+
 
   // Handler to add a gallery image
   const handleAddGalleryImage = async (newImage) => {
@@ -574,7 +635,7 @@ export default function App() {
       }`} />
 
       {/* Floating Island Navigation */}
-      <Navbar onOpenAdmin={() => setIsAdminOpen(true)} currentView={currentView} />
+      <Navbar onOpenAdmin={() => setIsAdminOpen(true)} currentView={currentView} schedule={schedule} />
 
       {/* Main Experience sections */}
       <main>
@@ -583,14 +644,93 @@ export default function App() {
           <div className="pt-24">
             <Collection extraGames={extraGames} />
           </div>
+        ) : currentView === 'gallery' ? (
+          /* Dedicated subpage (Interactive Bento Gallery) */
+          <div className="pt-28 min-h-screen relative z-10 animate-fade-in">
+            {galleryImages && galleryImages.length > 0 ? (
+              <InteractiveBentoGallery
+                mediaItems={galleryImages.map((img, idx) => {
+                  const isVideo = img.src && (
+                    img.src.endsWith('.mp4') || 
+                    img.src.endsWith('.webm') || 
+                    img.src.endsWith('.ogg') ||
+                    img.src.includes('video')
+                  );
+                  let span = "md:col-span-1 md:row-span-2 col-span-1 sm:col-span-1 sm:row-span-1";
+                  if (img.aspect === 'aspect-[3/4]') {
+                    span = "md:col-span-1 md:row-span-3 sm:col-span-1 sm:row-span-2 col-span-1";
+                  } else if (img.aspect === 'aspect-[4/3]') {
+                    span = "md:col-span-2 md:row-span-2 sm:col-span-2 sm:row-span-1 col-span-1";
+                  } else if (img.aspect === 'aspect-square') {
+                    span = "md:col-span-1 md:row-span-2 sm:col-span-1 sm:row-span-1 col-span-1";
+                  } else {
+                    const patterns = [
+                      "md:col-span-1 md:row-span-3 sm:col-span-1 sm:row-span-2",
+                      "md:col-span-2 md:row-span-2 sm:col-span-2 sm:row-span-1",
+                      "md:col-span-1 md:row-span-2 sm:col-span-1 sm:row-span-1"
+                    ];
+                    span = patterns[idx % patterns.length];
+                  }
+                  return {
+                    id: img.id || idx + 1,
+                    type: isVideo ? 'video' : 'image',
+                    title: img.title || 'Atelier Memory',
+                    desc: img.desc || 'A captured moment from our community gatherings.',
+                    url: img.src,
+                    span: span
+                  };
+                })}
+                title="ATELIER CHRONICLES"
+                description="A visual retrospective of our gatherings. Real people, tangible encounters, and deep strategic connections."
+              />
+            ) : (
+              <div className="container mx-auto px-4 py-16 flex flex-col items-center">
+                <div className="mb-8 text-center">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-sans font-black bg-clip-text text-transparent bg-gradient-to-r from-white via-[#C8B1CC] to-white">
+                    ATELIER CHRONICLES
+                  </h1>
+                  <p className="mt-4 text-sm sm:text-base font-serif italic text-[#C8B1CC]">
+                    A visual retrospective of our gatherings. Real people, tangible encounters, and deep strategic connections.
+                  </p>
+                </div>
+                
+                <div className="relative max-w-2xl w-full mx-auto rounded-[2.5rem] p-10 md:p-14 bg-[#3a1d42]/20 border border-dashed border-[#f8b146]/30 overflow-hidden text-center group select-none animate-fade-in shadow-[0_0_50px_rgba(58,29,66,0.15)] hover:border-[#f8b146]/50 transition-all duration-500">
+                  <div className="absolute top-6 left-6 w-3 h-3 border-t-2 border-l-2 border-[#f8b146]/30 group-hover:border-[#f8b146]/60 transition-colors duration-500" />
+                  <div className="absolute top-6 right-6 w-3 h-3 border-t-2 border-r-2 border-[#f8b146]/30 group-hover:border-[#f8b146]/60 transition-colors duration-500" />
+                  <div className="absolute bottom-6 left-6 w-3 h-3 border-b-2 border-l-2 border-[#f8b146]/30 group-hover:border-[#f8b146]/60 transition-colors duration-500" />
+                  <div className="absolute bottom-6 right-6 w-3 h-3 border-b-2 border-r-2 border-[#f8b146]/30 group-hover:border-[#f8b146]/60 transition-colors duration-500" />
+
+                  <div className="relative z-10 flex flex-col items-center">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-b from-[#f8b146]/10 to-[#f28a75]/10 border border-[#f8b146]/25 flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(248,177,70,0.08)] group-hover:scale-105 group-hover:border-[#f8b146]/40 transition-all duration-500">
+                      <ImageIcon className="text-[#f8b146] stroke-[1.5]" size={28} />
+                    </div>
+
+                    <h3 className="font-sans font-bold text-2xl text-white tracking-tight mb-3">
+                      No Captured Memories Yet
+                    </h3>
+                    
+                    <div className="h-[1px] w-20 bg-gradient-to-r from-transparent via-[#f8b146]/40 to-transparent my-3" />
+                    
+                    <p className="font-serif italic text-sm text-[#C8B1CC] max-w-md leading-relaxed mb-6">
+                      "Every grand strategy begins with an empty board." New gatherings and unforgettable gaming sessions will appear here as they are experienced and archived.
+                    </p>
+
+                    <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-[#f8b146]/60 font-semibold">
+                      Club Administration can upload new memories from the secure control panel.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         ) : (
           /* Main Landing Page View */
           <>
             {/* The Opening Shot (Hero) */}
-            <Hero />
+            <Hero schedule={schedule} />
 
             {/* The Manifesto (Philosophy) */}
-            <Philosophy onTriggerMeepleRain={() => setIsMeepleRainActive(true)} />
+            <Philosophy onTriggerMeepleRain={() => setIsMeepleRainActive(true)} schedule={schedule} />
 
             {/* Weekly Spotlight (Featured Campaign & Gathering Info) */}
             <WeeklySpotlight 
@@ -599,15 +739,6 @@ export default function App() {
               onScrollToCollection={handleScrollToCollection} 
             />
 
-            {/* Curated Collection Preview (Teaser Showcase) */}
-            <CollectionTeaser 
-              games={allGames} 
-              onNavigateToFullCollection={handleScrollToCollection} 
-            />
-
-            {/* Captured Moments (Gallery) */}
-            <Gallery images={galleryImages} />
-
             {/* Membership Admission & Vetted Onboarding Form */}
             <JoinForm />
           </>
@@ -615,7 +746,8 @@ export default function App() {
       </main>
 
       {/* The Rounded Obsidian Footer */}
-      <Footer onTriggerJenga={() => setIsJengaActive(true)} onOpenDisputes={() => setIsDisputesOpen(true)} />
+      <Footer onTriggerJenga={() => setIsJengaActive(true)} onOpenDisputes={() => setIsDisputesOpen(true)} schedule={schedule} />
+
 
       {/* Jenga Easter Egg Component */}
       <JengaTopple isOpen={isJengaActive} onClose={() => setIsJengaActive(false)} />
