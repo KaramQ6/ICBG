@@ -7,6 +7,7 @@ import WeeklySpotlight from './components/WeeklySpotlight';
 import Collection from './components/Collection';
 import Gallery, { DEFAULT_IMAGES } from './components/Gallery';
 import InteractiveBentoGallery from './components/ui/interactive-bento-gallery';
+import { Component as ImageAutoSlider } from './components/ui/image-auto-slider';
 import { Image as ImageIcon } from 'lucide-react';
 import JoinForm from './components/JoinForm';
 import Footer from './components/Footer';
@@ -272,7 +273,8 @@ export default function App() {
             title: item.title,
             category: item.category,
             aspect: item.aspect,
-            desc: item.description
+            desc: item.description,
+            show_on_homepage: item.show_on_homepage !== false
           }));
           setGalleryImages(mapped);
         } else {
@@ -553,9 +555,24 @@ export default function App() {
           title: newImage.title,
           category: newImage.category,
           aspect: newImage.aspect,
-          description: newImage.desc
+          description: newImage.desc,
+          show_on_homepage: newImage.show_on_homepage !== false
         }]);
-        if (error) throw error;
+        if (error) {
+          if (error.message && error.message.includes('show_on_homepage')) {
+            console.warn("show_on_homepage column not found in gallery_images table. Retrying insert without it.");
+            const { error: fallbackErr } = await supabase.from('gallery_images').insert([{
+              src: newImage.src,
+              title: newImage.title,
+              category: newImage.category,
+              aspect: newImage.aspect,
+              description: newImage.desc
+            }]);
+            if (fallbackErr) throw fallbackErr;
+          } else {
+            throw error;
+          }
+        }
         fetchGallery();
       } catch (e) {
         console.error("Supabase handleAddGalleryImage error:", e);
@@ -597,18 +614,50 @@ export default function App() {
             title: updatedImage.title,
             category: updatedImage.category,
             aspect: updatedImage.aspect,
-            description: updatedImage.desc
+            description: updatedImage.desc,
+            show_on_homepage: updatedImage.show_on_homepage !== false
           }).eq('id', updatedImage.id);
-          if (error) throw error;
+          
+          if (error) {
+            if (error.message && error.message.includes('show_on_homepage')) {
+              console.warn("show_on_homepage column not found in gallery_images table. Retrying update without it.");
+              const { error: fallbackErr } = await supabase.from('gallery_images').update({
+                src: updatedImage.src,
+                title: updatedImage.title,
+                category: updatedImage.category,
+                aspect: updatedImage.aspect,
+                description: updatedImage.desc
+              }).eq('id', updatedImage.id);
+              if (fallbackErr) throw fallbackErr;
+            } else {
+              throw error;
+            }
+          }
         } else {
           const { error } = await supabase.from('gallery_images').update({
             src: updatedImage.src,
             title: updatedImage.title,
             category: updatedImage.category,
             aspect: updatedImage.aspect,
-            description: updatedImage.desc
+            description: updatedImage.desc,
+            show_on_homepage: updatedImage.show_on_homepage !== false
           }).eq('src', updatedImage.src);
-          if (error) throw error;
+          
+          if (error) {
+            if (error.message && error.message.includes('show_on_homepage')) {
+              console.warn("show_on_homepage column not found in gallery_images table. Retrying update without it.");
+              const { error: fallbackErr } = await supabase.from('gallery_images').update({
+                src: updatedImage.src,
+                title: updatedImage.title,
+                category: updatedImage.category,
+                aspect: updatedImage.aspect,
+                description: updatedImage.desc
+              }).eq('src', updatedImage.src);
+              if (fallbackErr) throw fallbackErr;
+            } else {
+              throw error;
+            }
+          }
         }
       } catch (e) {
         console.error("Supabase handleUpdateGalleryImage error:", e);
@@ -728,6 +777,12 @@ export default function App() {
           <>
             {/* The Opening Shot (Hero) */}
             <Hero schedule={schedule} />
+
+            {/* Infinite Auto-scrolling Gallery Slider */}
+            <ImageAutoSlider 
+              images={galleryImages.filter(img => img.show_on_homepage !== false).map(img => img.src)}
+              isHomeView={true}
+            />
 
             {/* The Manifesto (Philosophy) */}
             <Philosophy onTriggerMeepleRain={() => setIsMeepleRainActive(true)} schedule={schedule} />

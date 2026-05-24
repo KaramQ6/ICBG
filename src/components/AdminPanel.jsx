@@ -1,8 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
-import { Lock, Unlock, X, Plus, Calendar, Save, Search, Check, Sparkles, Film, Play, Eye, Image as ImageIcon, Trash2, Pencil, Dices, Upload, Loader2 } from 'lucide-react';
+import { 
+  Lock, Unlock, X, Plus, Calendar, Save, Search, Check, Sparkles, Film, 
+  Play, Eye, Image as ImageIcon, Trash2, Pencil, Dices, Upload, Loader2,
+  MapPin, Link as LinkIcon, Mail, Phone, Users, Clock, Tag, Globe, Award, 
+  ShieldAlert, Layers, CheckCircle2, History
+} from 'lucide-react';
 
-export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdateGame, schedule, onUpdateSchedule, galleryImages, onAddGalleryImage, onRemoveGalleryImage, onUpdateGalleryImage }) {
+export default function AdminPanel({ 
+  isOpen, 
+  onClose, 
+  games, 
+  onAddGame, 
+  onUpdateGame, 
+  schedule, 
+  onUpdateSchedule, 
+  galleryImages, 
+  onAddGalleryImage, 
+  onRemoveGalleryImage, 
+  onUpdateGalleryImage 
+}) {
   const [passcode, setPasscode] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authError, setAuthError] = useState('');
@@ -17,7 +34,6 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
   const [gameSearch, setGameSearch] = useState('');
   const [locationName, setLocationName] = useState('');
   const [locationLink, setLocationLink] = useState('');
-
 
   // Add Game form state
   const [newGameTitle, setNewGameTitle] = useState('');
@@ -45,6 +61,7 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
   const [galleryCategory, setGalleryCategory] = useState('Play Session');
   const [galleryDesc, setGalleryDesc] = useState('');
   const [galleryAspect, setGalleryAspect] = useState('aspect-square');
+  const [galleryShowOnHomepage, setGalleryShowOnHomepage] = useState(true);
 
   // Gallery Editing states & helpers
   const [editingImageIndex, setEditingImageIndex] = useState(null);
@@ -147,6 +164,7 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
     setGalleryDesc('');
     setGalleryCategory('Play Session');
     setGalleryAspect('aspect-square');
+    setGalleryShowOnHomepage(true);
     setEditingImageIndex(null);
   };
 
@@ -157,6 +175,7 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
     setGalleryCategory(img.category || 'Play Session');
     setGalleryAspect(img.aspect || 'aspect-square');
     setGalleryDesc(img.desc || '');
+    setGalleryShowOnHomepage(img.show_on_homepage !== false);
     setEditingImageIndex(index);
   };
 
@@ -179,7 +198,6 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
       setEditingGame(null);
     }
   }, [isOpen, schedule]);
-
 
   // Fetch applications when panel is open or tab changes
   useEffect(() => {
@@ -322,7 +340,6 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
     setTimeout(() => setFormSuccess(''), 3000);
   };
 
-
   const handleAddGameSubmit = (e) => {
     e.preventDefault();
     if (!newGameTitle) return;
@@ -349,7 +366,7 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
       time: newGameTime || '30-45 Min',
       year: newGameYear || new Date().getFullYear().toString(),
       expansion: newGameExpansion || 'None',
-      box_img: newGameBoxImg || '', // uploads fallback
+      box_img: newGameBoxImg || '', 
       box_link: '',
       play_img: '',
       play_link: '',
@@ -389,142 +406,179 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
   );
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-      {/* Dark backdrop overlay with elegant sunset plum glassmorphism blur */}
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 md:p-6 overflow-hidden">
+      {/* Luxury dark-plum sunset glassmorphism backdrop */}
       <div 
         onClick={onClose}
-        className="absolute inset-0 bg-[#25102a]/60 backdrop-blur-md transition-all duration-300"
+        className="absolute inset-0 bg-gradient-to-br from-[#25102a]/85 to-[#120515]/95 backdrop-blur-xl transition-all duration-500"
       />
 
-      {/* Main Admin Card */}
-      <div className="relative w-full max-w-3xl bg-[#3a1d42]/95 border border-white/10 rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(248,177,70,0.12)] z-10 flex flex-col max-h-[90vh] backdrop-blur-md text-white">
+      {/* Main Admin Dashboard Container */}
+      <div className="relative w-full max-w-4xl bg-gradient-to-b from-[#3a1d42]/95 to-[#25102a]/98 border border-white/10 rounded-[2.5rem] overflow-hidden shadow-[0_25px_60px_-15px_rgba(248,177,70,0.18)] z-10 flex flex-col max-h-[92vh] backdrop-blur-xl text-white">
         
-        {/* Header */}
-        <div className="px-8 py-6 border-b border-white/10 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#f8b146]/10 border border-[#f8b146]/30 flex items-center justify-center text-[#f8b146] shadow-[0_0_15px_rgba(248,177,70,0.15)]">
-              {isAuthenticated ? <Unlock size={18} /> : <Lock size={18} />}
+        {/* Top Gradient Accents */}
+        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#f8b146]/50 to-transparent" />
+        <div className="absolute top-0 right-1/4 w-40 h-40 bg-[#f8b146]/5 rounded-full filter blur-[40px] pointer-events-none" />
+
+        {/* Premium Header */}
+        <div className="px-6 md:px-8 py-5 md:py-6 border-b border-white/10 flex items-center justify-between relative bg-black/10">
+          <div className="flex items-center gap-4">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#f8b146]/20 to-[#f28a75]/10 border border-[#f8b146]/30 flex items-center justify-center text-[#f8b146] shadow-[0_0_20px_rgba(248,177,70,0.2)]">
+              {isAuthenticated ? <Unlock size={20} className="animate-pulse" /> : <Lock size={20} />}
             </div>
             <div className="text-left">
-              <span className="font-mono text-[9px] uppercase tracking-[0.25em] text-[#f8b146] font-bold block">IBGC CLUB ATELIER</span>
-              <h3 className="font-sans font-black text-xl text-white">Admin Control Center</h3>
+              <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-[#f8b146] font-extrabold block">
+                IBGC CLUB ATELIER
+              </span>
+              <h3 className="font-sans font-black text-xl md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-[#C8B1CC]">
+                Admin Control Center
+              </h3>
             </div>
           </div>
 
           <button 
             onClick={onClose}
-            className="w-10 h-10 rounded-full border border-white/10 hover:border-[#f8b146]/40 text-white/75 hover:text-[#f8b146] transition-all duration-300 flex items-center justify-center cursor-pointer bg-white/5"
+            className="w-10 h-10 rounded-full border border-white/10 hover:border-[#f8b146]/45 text-white/70 hover:text-[#f8b146] bg-white/5 hover:bg-[#f8b146]/10 transition-all duration-300 flex items-center justify-center cursor-pointer shadow-inner"
           >
-            <X size={16} />
+            <X size={18} />
           </button>
         </div>
 
         {!isAuthenticated ? (
           /* Authentication Screen */
-          <div className="p-8 md:p-12 flex flex-col items-center justify-center flex-1">
-            <div className="w-16 h-16 rounded-full bg-[#f8b146]/5 border border-[#f8b146]/20 flex items-center justify-center text-[#f8b146] mb-6 animate-pulse">
-              <Lock size={28} />
+          <div className="p-8 md:p-16 flex flex-col items-center justify-center flex-1 relative overflow-y-auto">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(248,177,70,0.05)_0%,transparent_70%)] pointer-events-none" />
+            
+            <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-[#f8b146]/10 to-[#f28a75]/5 border border-[#f8b146]/30 flex items-center justify-center text-[#f8b146] mb-6 shadow-[0_10px_30px_rgba(248,177,70,0.1)] relative group">
+              <div className="absolute inset-0 rounded-3xl bg-[#f8b146]/20 blur-md opacity-50 group-hover:opacity-100 transition-opacity" />
+              <Lock size={32} className="relative z-10" />
             </div>
-            <h4 className="font-sans font-bold text-lg text-white mb-2 text-center">Private Administration Portal</h4>
-            <p className="font-sans font-light text-xs text-[#C8B1CC] text-center max-w-sm mb-8 leading-relaxed">
-              Please enter the secret passcode of Irbid Board Games Community (IBGC) to unlock administrative controls.
+
+            <h4 className="font-sans font-black text-xl md:text-2xl text-white mb-2 text-center tracking-tight">
+              Private Administration Portal
+            </h4>
+            <p className="font-sans font-light text-xs md:text-sm text-[#C8B1CC] text-center max-w-md mb-8 leading-relaxed">
+              Please input the Irbid Board Games Community secret passcode to release restricted club configuration tools.
             </p>
 
-            <form onSubmit={handleAuthSubmit} className="w-full max-w-xs flex flex-col items-center">
-              <input
-                type="password"
-                placeholder="Secret Passcode"
-                value={passcode}
-                onChange={(e) => setPasscode(e.target.value)}
-                className="w-full py-4 px-6 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] text-white placeholder-white/30 rounded-full font-mono text-center text-lg tracking-[0.3em] focus:outline-none focus:ring-1 focus:ring-[#f8b146]/20 transition-all duration-300"
-                autoFocus
-              />
+            <form onSubmit={handleAuthSubmit} className="w-full max-w-xs flex flex-col items-center z-10">
+              <div className="w-full relative group">
+                <input
+                  type="password"
+                  placeholder="••••"
+                  value={passcode}
+                  onChange={(e) => setPasscode(e.target.value)}
+                  className="w-full py-4 px-6 bg-[#120515]/65 border border-white/15 focus:border-[#f8b146] text-white placeholder-white/20 rounded-2xl font-mono text-center text-2xl tracking-[0.4em] focus:outline-none focus:ring-4 focus:ring-[#f8b146]/10 transition-all duration-300 shadow-inner"
+                  autoFocus
+                />
+                <div className="absolute inset-0 rounded-2xl border border-transparent group-hover:border-white/10 pointer-events-none transition-all" />
+              </div>
+
               {authError && (
-                <span className="text-[11px] font-sans text-red-400 mt-3 text-center">{authError}</span>
+                <div className="flex items-center gap-2 mt-4 px-4 py-2 bg-red-950/40 border border-red-500/20 text-red-400 rounded-xl text-[11px] font-sans">
+                  <ShieldAlert size={12} className="shrink-0" />
+                  <span>{authError}</span>
+                </div>
               )}
 
               <button
                 type="submit"
-                className="mt-6 w-full py-4 bg-gradient-to-r from-[#f8b146] to-[#f28a75] text-[#3a1d42] rounded-full font-sans font-bold text-xs uppercase tracking-widest shadow-lg shadow-[#f8b146]/15 hover:scale-[1.02] hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-300 cursor-pointer"
+                className="mt-6 w-full py-4 bg-gradient-to-r from-[#f8b146] to-[#f28a75] text-[#25102a] rounded-2xl font-sans font-extrabold text-xs uppercase tracking-widest shadow-lg shadow-[#f8b146]/20 hover:shadow-[#f8b146]/35 hover:scale-[1.01] hover:-translate-y-0.5 active:scale-[0.99] active:translate-y-0 transition-all duration-300 cursor-pointer"
               >
-                Enter Portal
+                Release Atelier Dashboard
               </button>
             </form>
-            <span className="font-mono text-[9px] text-[#C8B1CC]/40 mt-10">HINT: YEAR OF JENGA RELEASE</span>
+
+            <div className="mt-12 p-3 bg-white/5 border border-white/5 rounded-2xl flex items-center gap-3">
+              <span className="font-mono text-[9px] text-[#f8b146] font-bold tracking-widest uppercase shrink-0">
+                SECRET INSCRIPTION:
+              </span>
+              <span className="font-sans text-[10px] text-[#C8B1CC]">
+                The revelation year of classic Jenga
+              </span>
+            </div>
           </div>
         ) : (
           /* Authenticated Dashboard Panel */
           <div className="flex flex-col flex-1 overflow-hidden">
-            {/* Tabs */}
-            <div className="flex border-b border-white/10 bg-[#25102a]/30 px-4 overflow-x-auto whitespace-nowrap scrollbar-none">
+            
+            {/* Elegant Tab Navigator Bar */}
+            <div className="flex border-b border-white/10 bg-[#120515]/40 px-4 md:px-6 overflow-x-auto whitespace-nowrap scrollbar-none gap-2 py-3">
               <button
                 onClick={() => { setActiveTab('schedule'); setFormSuccess(''); }}
-                className={`px-6 py-4 font-mono text-xs uppercase tracking-widest relative transition-all duration-300 cursor-pointer ${
-                  activeTab === 'schedule' ? 'text-[#f8b146] font-bold' : 'text-[#C8B1CC] hover:text-white'
+                className={`px-4 py-2.5 rounded-xl font-mono text-[10px] uppercase tracking-widest transition-all duration-300 cursor-pointer flex items-center gap-2 border ${
+                  activeTab === 'schedule' 
+                    ? 'bg-gradient-to-r from-[#f8b146]/15 to-[#f28a75]/10 border-[#f8b146]/45 text-[#f8b146] font-bold shadow-[0_0_15px_rgba(248,177,70,0.1)]' 
+                    : 'bg-transparent border-transparent text-[#C8B1CC] hover:text-white hover:bg-white/5'
                 }`}
               >
-                Weekly Campaign Schedule
-                {activeTab === 'schedule' && (
-                  <div className="absolute bottom-0 left-6 right-6 h-[2px] bg-[#f8b146]" />
-                )}
+                <Calendar size={13} />
+                Campaign Schedule
               </button>
               
               <button
                 onClick={() => { setActiveTab('addGame'); setFormSuccess(''); }}
-                className={`px-6 py-4 font-mono text-xs uppercase tracking-widest relative transition-all duration-300 cursor-pointer ${
-                  activeTab === 'addGame' ? 'text-[#f8b146] font-bold' : 'text-[#C8B1CC] hover:text-white'
+                className={`px-4 py-2.5 rounded-xl font-mono text-[10px] uppercase tracking-widest transition-all duration-300 cursor-pointer flex items-center gap-2 border ${
+                  activeTab === 'addGame' 
+                    ? 'bg-gradient-to-r from-[#f8b146]/15 to-[#f28a75]/10 border-[#f8b146]/45 text-[#f8b146] font-bold shadow-[0_0_15px_rgba(248,177,70,0.1)]' 
+                    : 'bg-transparent border-transparent text-[#C8B1CC] hover:text-white hover:bg-white/5'
                 }`}
               >
-                Archive New Game
-                {activeTab === 'addGame' && (
-                  <div className="absolute bottom-0 left-6 right-6 h-[2px] bg-[#f8b146]" />
-                )}
+                <Plus size={13} />
+                Archive Game
               </button>
 
               <button
                 onClick={() => { setActiveTab('manageGames'); setFormSuccess(''); }}
-                className={`px-6 py-4 font-mono text-xs uppercase tracking-widest relative transition-all duration-300 cursor-pointer ${
-                  activeTab === 'manageGames' ? 'text-[#f8b146] font-bold' : 'text-[#C8B1CC] hover:text-white'
+                className={`px-4 py-2.5 rounded-xl font-mono text-[10px] uppercase tracking-widest transition-all duration-300 cursor-pointer flex items-center gap-2 border ${
+                  activeTab === 'manageGames' 
+                    ? 'bg-gradient-to-r from-[#f8b146]/15 to-[#f28a75]/10 border-[#f8b146]/45 text-[#f8b146] font-bold shadow-[0_0_15px_rgba(248,177,70,0.1)]' 
+                    : 'bg-transparent border-transparent text-[#C8B1CC] hover:text-white hover:bg-white/5'
                 }`}
               >
-                Manage Games
-                {activeTab === 'manageGames' && (
-                  <div className="absolute bottom-0 left-6 right-6 h-[2px] bg-[#f8b146]" />
-                )}
+                <Dices size={13} />
+                Manage Directory
               </button>
               
               <button
                 onClick={() => { setActiveTab('gallery'); setFormSuccess(''); }}
-                className={`px-6 py-4 font-mono text-xs uppercase tracking-widest relative transition-all duration-300 cursor-pointer ${
-                  activeTab === 'gallery' ? 'text-[#f8b146] font-bold' : 'text-[#C8B1CC] hover:text-white'
+                className={`px-4 py-2.5 rounded-xl font-mono text-[10px] uppercase tracking-widest transition-all duration-300 cursor-pointer flex items-center gap-2 border ${
+                  activeTab === 'gallery' 
+                    ? 'bg-gradient-to-r from-[#f8b146]/15 to-[#f28a75]/10 border-[#f8b146]/45 text-[#f8b146] font-bold shadow-[0_0_15px_rgba(248,177,70,0.1)]' 
+                    : 'bg-transparent border-transparent text-[#C8B1CC] hover:text-white hover:bg-white/5'
                 }`}
               >
+                <ImageIcon size={13} />
                 Gallery Manager
-                {activeTab === 'gallery' && (
-                  <div className="absolute bottom-0 left-6 right-6 h-[2px] bg-[#f8b146]" />
-                )}
               </button>
 
               <button
                 onClick={() => { setActiveTab('applicants'); setFormSuccess(''); }}
-                className={`px-6 py-4 font-mono text-xs uppercase tracking-widest relative transition-all duration-300 cursor-pointer ${
-                  activeTab === 'applicants' ? 'text-[#f8b146] font-bold' : 'text-[#C8B1CC] hover:text-white'
+                className={`px-4 py-2.5 rounded-xl font-mono text-[10px] uppercase tracking-widest transition-all duration-300 cursor-pointer flex items-center gap-2 border relative ${
+                  activeTab === 'applicants' 
+                    ? 'bg-gradient-to-r from-[#f8b146]/15 to-[#f28a75]/10 border-[#f8b146]/45 text-[#f8b146] font-bold shadow-[0_0_15px_rgba(248,177,70,0.1)]' 
+                    : 'bg-transparent border-transparent text-[#C8B1CC] hover:text-white hover:bg-white/5'
                 }`}
               >
-                Applicants List
-                {activeTab === 'applicants' && (
-                  <div className="absolute bottom-0 left-6 right-6 h-[2px] bg-[#f8b146]" />
+                <Sparkles size={13} />
+                Applicants
+                {applicantsList.length > 0 && (
+                  <span className="absolute -top-1.5 -right-1 px-1.5 py-0.5 rounded-full bg-gradient-to-r from-[#f8b146] to-[#f28a75] text-[#25102a] font-mono text-[7px] font-black scale-90 animate-bounce">
+                    {applicantsList.length}
+                  </span>
                 )}
               </button>
             </div>
 
             {/* Content Container (Scrollable) */}
-            <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 bg-transparent">
+            <div className="flex-1 overflow-y-auto p-5 md:p-8 space-y-6 bg-transparent custom-scrollbar">
               
               {/* Success Notification Bar */}
               {formSuccess && (
-                <div className="bg-emerald-950/40 border border-emerald-500/20 p-4 rounded-2xl flex items-center gap-3 text-emerald-300 font-sans text-xs font-semibold">
-                  <Sparkles size={16} className="text-emerald-400 shrink-0" />
+                <div className="bg-emerald-950/40 border border-emerald-500/25 p-4 rounded-2xl flex items-center gap-3 text-emerald-300 font-sans text-xs font-semibold shadow-inner animate-fadeIn">
+                  <div className="w-6 h-6 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                    <CheckCircle2 size={14} className="text-emerald-400" />
+                  </div>
                   <span>{formSuccess}</span>
                 </div>
               )}
@@ -532,88 +586,110 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
               {activeTab === 'schedule' ? (
                 /* TAB 1: SCHEDULE MANAGER FORM */
                 <form onSubmit={handleScheduleSave} className="space-y-6 text-left">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    
-                    {/* Next Gathering Input */}
-                    <div className="flex flex-col gap-2">
-                      <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Main Gathering Title</label>
-                      <input
-                        type="text"
-                        value={nextHangout}
-                        onChange={(e) => setNextHangout(e.target.value)}
-                        placeholder="e.g. Friday, 22/5/2026 7:30 PM"
-                        className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
-                        required
-                      />
+                  
+                  {/* Visual Section Card 1: Time Details */}
+                  <div className="bg-white/5 border border-white/10 rounded-3xl p-5 md:p-6 space-y-5 backdrop-blur-md">
+                    <div className="flex items-center gap-2 border-b border-white/5 pb-3">
+                      <Calendar size={15} className="text-[#f8b146]" />
+                      <h4 className="font-sans font-bold text-sm text-white">Gathering Campaign Schedule</h4>
                     </div>
 
-                    {/* Thursday Date/Time Input */}
-                    <div className="flex flex-col gap-2">
-                      <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Thursday Session Time</label>
-                      <input
-                        type="text"
-                        value={thursdayDate}
-                        onChange={(e) => setThursdayDate(e.target.value)}
-                        placeholder="e.g. 28/5/26 7:00 PM"
-                        className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
-                        required
-                      />
-                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                      {/* Next Gathering Input */}
+                      <div className="flex flex-col gap-2">
+                        <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Main Gathering Title</label>
+                        <input
+                          type="text"
+                          value={nextHangout}
+                          onChange={(e) => setNextHangout(e.target.value)}
+                          placeholder="e.g. Friday, 22/5/2026 7:30 PM"
+                          className="py-3 px-4 bg-[#120515]/50 border border-white/10 hover:border-white/20 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
+                          required
+                        />
+                      </div>
 
-                    {/* Friday Date/Time Input */}
-                    <div className="flex flex-col gap-2">
-                      <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Friday Session Time</label>
-                      <input
-                        type="text"
-                        value={fridayDate}
-                        onChange={(e) => setFridayDate(e.target.value)}
-                        placeholder="e.g. 22/5/26 7:00 PM"
-                        className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
-                        required
-                      />
+                      {/* Thursday Date/Time Input */}
+                      <div className="flex flex-col gap-2">
+                        <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Thursday Session Time</label>
+                        <input
+                          type="text"
+                          value={thursdayDate}
+                          onChange={(e) => setThursdayDate(e.target.value)}
+                          placeholder="e.g. 28/5/26 7:00 PM"
+                          className="py-3 px-4 bg-[#120515]/50 border border-white/10 hover:border-white/20 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
+                          required
+                        />
+                      </div>
+
+                      {/* Friday Date/Time Input */}
+                      <div className="flex flex-col gap-2">
+                        <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Friday Session Time</label>
+                        <input
+                          type="text"
+                          value={fridayDate}
+                          onChange={(e) => setFridayDate(e.target.value)}
+                          placeholder="e.g. 22/5/26 7:00 PM"
+                          className="py-3 px-4 bg-[#120515]/50 border border-white/10 hover:border-white/20 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
+                          required
+                        />
+                      </div>
                     </div>
                   </div>
 
-                  {/* Location Configuration Row */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-white/10 pt-6">
-                    {/* Location Name Input */}
-                    <div className="flex flex-col gap-2">
-                      <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Gathering Location Name</label>
-                      <input
-                        type="text"
-                        value={locationName}
-                        onChange={(e) => setLocationName(e.target.value)}
-                        placeholder="e.g. Cortina.D Cafe"
-                        className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
-                        required
-                      />
+                  {/* Visual Section Card 2: Location Configuration */}
+                  <div className="bg-white/5 border border-white/10 rounded-3xl p-5 md:p-6 space-y-5 backdrop-blur-md">
+                    <div className="flex items-center gap-2 border-b border-white/5 pb-3">
+                      <MapPin size={15} className="text-[#f8b146]" />
+                      <h4 className="font-sans font-bold text-sm text-white">Gathering Location Configuration</h4>
                     </div>
 
-                    {/* Location Google Maps Link Input */}
-                    <div className="flex flex-col gap-2">
-                      <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Google Maps Location Link</label>
-                      <input
-                        type="url"
-                        value={locationLink}
-                        onChange={(e) => setLocationLink(e.target.value)}
-                        placeholder="e.g. https://maps.app.goo.gl/..."
-                        className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
-                        required
-                      />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                      {/* Location Name Input */}
+                      <div className="flex flex-col gap-2">
+                        <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Gathering Location Name</label>
+                        <div className="relative">
+                          <input
+                            type="text"
+                            value={locationName}
+                            onChange={(e) => setLocationName(e.target.value)}
+                            placeholder="e.g. Cortina.D Cafe"
+                            className="w-full py-3 px-4 bg-[#120515]/50 border border-white/10 hover:border-white/20 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      {/* Location Google Maps Link Input */}
+                      <div className="flex flex-col gap-2">
+                        <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Google Maps Location Link</label>
+                        <div className="relative">
+                          <input
+                            type="url"
+                            value={locationLink}
+                            onChange={(e) => setLocationLink(e.target.value)}
+                            placeholder="e.g. https://maps.app.goo.gl/..."
+                            className="w-full py-3 px-4 pl-9 bg-[#120515]/50 border border-white/10 hover:border-white/20 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
+                            required
+                          />
+                          <LinkIcon size={12} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30" />
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-
-                  {/* Featured Games Selection (Checklist) */}
-                  <div className="border-t border-white/10 pt-6 flex flex-col gap-3">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                      <div>
-                        <h4 className="font-sans font-bold text-sm text-white">Weekly Featured Games</h4>
-                        <p className="font-sans text-[10px] text-[#C8B1CC]">Select games to highlight on the landing page spotlight</p>
+                  {/* Visual Section Card 3: Featured Games Selection */}
+                  <div className="bg-white/5 border border-white/10 rounded-3xl p-5 md:p-6 space-y-4 backdrop-blur-md">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-4">
+                      <div className="flex items-center gap-2">
+                        <Award size={15} className="text-[#f8b146]" />
+                        <div className="text-left">
+                          <h4 className="font-sans font-bold text-sm text-white">Weekly Featured Spotlight</h4>
+                          <p className="font-sans text-[10px] text-[#C8B1CC]/80">Select games to spotlight on the club campaign main page</p>
+                        </div>
                       </div>
-                      <div className="font-mono text-[10px] bg-[#f8b146]/10 border border-[#f8b146]/25 text-[#f8b146] px-3 py-1 rounded-full w-max">
-                        Selected {featuredTitles.length} games
-                      </div>
+                      <span className="font-mono text-[9px] bg-[#f8b146]/10 border border-[#f8b146]/30 text-[#f8b146] px-3.5 py-1 rounded-full w-max font-bold tracking-wider">
+                        SELECTED: {featuredTitles.length}
+                      </span>
                     </div>
 
                     {/* Selector search */}
@@ -623,15 +699,15 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
                       </div>
                       <input
                         type="text"
-                        placeholder="Search for a game to feature..."
+                        placeholder="Type board game title to filter..."
                         value={gameSearch}
                         onChange={(e) => setGameSearch(e.target.value)}
-                        className="w-full py-2.5 pl-11 pr-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] text-white placeholder-white/30 rounded-xl font-sans text-xs focus:outline-none transition-all duration-300"
+                        className="w-full py-3 pl-11 pr-4 bg-[#120515]/40 border border-white/10 focus:border-[#f8b146] text-white placeholder-white/30 rounded-xl font-sans text-xs focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
                       />
                     </div>
 
                     {/* Selectable grid list */}
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 max-h-[220px] overflow-y-auto border border-white/10 rounded-2xl p-4 bg-[#25102a]/30">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-[220px] overflow-y-auto border border-white/10 rounded-2xl p-4 bg-[#120515]/20 custom-scrollbar">
                       {filteredGamesForSelect.map((game) => {
                         const isFeatured = featuredTitles.includes(game.title);
                         return (
@@ -641,292 +717,125 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
                             onClick={() => toggleFeaturedGame(game.title)}
                             className={`p-3 rounded-xl border flex items-center justify-between transition-all duration-300 text-left cursor-pointer ${
                               isFeatured 
-                                ? 'bg-[#f8b146]/10 border-[#f8b146]/45 text-white shadow-sm' 
-                                : 'bg-[#25102a]/40 border-white/8 text-[#C8B1CC] hover:border-white/20 hover:text-white'
+                                ? 'bg-gradient-to-r from-[#f8b146]/15 to-[#f28a75]/5 border-[#f8b146]/60 text-white shadow-sm' 
+                                : 'bg-[#120515]/40 border-white/5 text-[#C8B1CC] hover:border-white/15 hover:text-white hover:bg-[#120515]/60'
                             }`}
                           >
                             <span className="font-sans font-bold text-xs truncate max-w-[170px]">{game.title}</span>
-                            <div className={`w-4 h-4 rounded-md border flex items-center justify-center shrink-0 ${
-                              isFeatured ? 'bg-[#f8b146] border-[#f8b146] text-[#3a1d42]' : 'border-white/20'
+                            <div className={`w-5 h-5 rounded-md border flex items-center justify-center shrink-0 transition-all ${
+                              isFeatured ? 'bg-gradient-to-r from-[#f8b146] to-[#f28a75] border-transparent text-[#25102a]' : 'border-white/20'
                             }`}>
-                              {isFeatured && <Check size={10} strokeWidth={4} />}
+                              {isFeatured && <Check size={12} strokeWidth={3} />}
                             </div>
                           </button>
                         );
                       })}
                       {filteredGamesForSelect.length === 0 && (
-                        <div className="col-span-full py-6 text-center text-[#C8B1CC]/40 font-sans text-xs">
-                          No matching games found
+                        <div className="col-span-full py-8 text-center text-[#C8B1CC]/40 font-sans text-xs flex flex-col items-center gap-2">
+                          <Dices size={20} className="opacity-20 animate-spin" />
+                          <span>No matches found in your archived vault.</span>
                         </div>
                       )}
                     </div>
                   </div>
 
                   {/* Submit Button */}
-                  <div className="border-t border-white/10 pt-6 flex justify-end">
+                  <div className="pt-4 flex justify-end">
                     <button
                       type="submit"
-                      className="px-8 py-3.5 bg-gradient-to-r from-[#f8b146] to-[#f28a75] text-[#3a1d42] rounded-full font-sans font-bold text-xs uppercase tracking-widest shadow-lg shadow-[#f8b146]/15 hover:scale-[1.02] hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-300 flex items-center gap-2 cursor-pointer"
+                      className="px-8 py-4 bg-gradient-to-r from-[#f8b146] to-[#f28a75] text-[#25102a] rounded-2xl font-sans font-extrabold text-xs uppercase tracking-widest shadow-lg shadow-[#f8b146]/20 hover:scale-[1.01] hover:-translate-y-0.5 active:scale-[0.99] active:translate-y-0 transition-all duration-300 flex items-center gap-2.5 cursor-pointer"
                     >
-                      <Save size={14} /> Save Weekly Campaign
+                      <Save size={14} /> Update Campaign schedule
                     </button>
                   </div>
                 </form>
               ) : activeTab === 'addGame' ? (
                 /* TAB 2: ADD NEW BOARD GAME FORM */
                 <form onSubmit={handleAddGameSubmit} className="space-y-6 text-left">
+                  
+                  {/* Grid section cards */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     
-                    {/* Game Title */}
-                    <div className="flex flex-col gap-2">
-                      <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Game Title *</label>
-                      <input
-                        type="text"
-                        value={newGameTitle}
-                        onChange={(e) => setNewGameTitle(e.target.value)}
-                        placeholder="e.g. Scythe"
-                        className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
-                        required
-                      />
-                    </div>
-
-                    {/* Complexity Type Dropdown */}
-                    <div className="flex flex-col gap-2">
-                      <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Complexity Classification</label>
-                      <select
-                        value={newGameType}
-                        onChange={(e) => setNewGameType(e.target.value)}
-                        className="py-3 px-4 bg-[#25102a]/90 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white focus:outline-none transition-all duration-300 cursor-pointer"
-                      >
-                        <option value="Social" className="bg-[#25102a] text-white">Social</option>
-                        <option value="Easy" className="bg-[#25102a] text-white">Easy</option>
-                        <option value="Light" className="bg-[#25102a] text-white">Light</option>
-                        <option value="Medium" className="bg-[#25102a] text-white">Medium</option>
-                        <option value="Heavy" className="bg-[#25102a] text-white">Heavy</option>
-                      </select>
-                    </div>
-
-                    {/* Format Strategy (Competition) */}
-                    <div className="flex flex-col gap-2">
-                      <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Competition Format</label>
-                      <select
-                        value={newGameComp}
-                        onChange={(e) => setNewGameComp(e.target.value)}
-                        className="py-3 px-4 bg-[#25102a]/90 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white focus:outline-none transition-all duration-300 cursor-pointer"
-                      >
-                        <option value="Competitive" className="bg-[#25102a] text-white">Competitive</option>
-                        <option value="Cooperative" className="bg-[#25102a] text-white">Cooperative</option>
-                      </select>
-                    </div>
-
-                    {/* Themes */}
-                    <div className="flex flex-col gap-2">
-                      <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Theme / Mechanics</label>
-                      <input
-                        type="text"
-                        value={newGameTheme}
-                        onChange={(e) => setNewGameTheme(e.target.value)}
-                        placeholder="e.g. Strategy, Resource Management"
-                        className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
-                      />
-                    </div>
-
-                    {/* Players count */}
-                    <div className="flex flex-col gap-2">
-                      <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Players Count</label>
-                      <input
-                        type="text"
-                        value={newGamePlayers}
-                        onChange={(e) => setNewGamePlayers(e.target.value)}
-                        placeholder="e.g. 1 - 5"
-                        className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
-                      />
-                    </div>
-
-                    {/* Playtime */}
-                    <div className="flex flex-col gap-2">
-                      <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Playtime</label>
-                      <input
-                        type="text"
-                        value={newGameTime}
-                        onChange={(e) => setNewGameTime(e.target.value)}
-                        placeholder="e.g. 90 - 115 Min"
-                        className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
-                      />
-                    </div>
-
-                    {/* Year */}
-                    <div className="flex flex-col gap-2">
-                      <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Release Year</label>
-                      <input
-                        type="text"
-                        value={newGameYear}
-                        onChange={(e) => setNewGameYear(e.target.value)}
-                        placeholder="e.g. 2016"
-                        className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
-                      />
-                    </div>
-
-                    {/* Expansion */}
-                    <div className="flex flex-col gap-2">
-                      <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Expansion</label>
-                      <input
-                        type="text"
-                        value={newGameExpansion}
-                        onChange={(e) => setNewGameExpansion(e.target.value)}
-                        placeholder="e.g. None or Invaders from Afar"
-                        className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
-                      />
-                    </div>
-
-                    {/* How to play video link */}
-                    <div className="flex flex-col gap-2">
-                      <label className="font-mono text-[9px] flex items-center gap-1 uppercase tracking-wider text-[#C8B1CC]/80">
-                        <Play size={10} className="text-[#f8b146]" /> How-To-Play YouTube Link
-                      </label>
-                      <input
-                        type="url"
-                        value={newGameHowToPlay}
-                        onChange={(e) => setNewGameHowToPlay(e.target.value)}
-                        placeholder="YouTube tutorial URL"
-                        className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
-                      />
-                    </div>
-
-                    {/* Quick Summary video link */}
-                    <div className="flex flex-col gap-2">
-                      <label className="font-mono text-[9px] flex items-center gap-1 uppercase tracking-wider text-[#C8B1CC]/80">
-                        <Film size={10} className="text-[#f8b146]" /> Quick Summary YouTube Link
-                      </label>
-                      <input
-                        type="url"
-                        value={newGameQuickSummary}
-                        onChange={(e) => setNewGameQuickSummary(e.target.value)}
-                        placeholder="YouTube summary URL"
-                        className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
-                      />
-                    </div>
-
-                    {/* Game Box Image Upload */}
-                    <div className="flex flex-col gap-2 col-span-1 md:col-span-2 border-t border-white/10 pt-4 mt-2">
-                      <label className="font-mono text-[9px] flex items-center gap-1 uppercase tracking-wider text-[#C8B1CC]/80">
-                        <ImageIcon size={10} className="text-[#f8b146]" /> Game Cover Image (Direct Upload to Supabase Bucket)
-                      </label>
-                      <div className="flex flex-col sm:flex-row gap-4 items-center bg-[#25102a]/40 border border-white/10 p-4 rounded-2xl">
-                        <div className="flex-1 w-full text-left">
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleGameImageFileChange}
-                            disabled={isUploadingGame}
-                            className="hidden"
-                            id="game-image-upload"
-                          />
-                          <label
-                            htmlFor="game-image-upload"
-                            className={`flex items-center justify-center gap-2 py-3 px-6 rounded-xl border border-dashed transition-all duration-300 cursor-pointer font-sans text-xs font-semibold text-center ${
-                              isUploadingGame
-                                ? 'bg-white/5 border-white/10 text-white/40 cursor-not-allowed'
-                                : 'bg-[#f8b146]/5 border-[#f8b146]/30 text-[#f8b146] hover:bg-[#f8b146]/10 hover:border-[#f8b146]/50 shadow-sm shadow-[#f8b146]/5'
-                            }`}
-                          >
-                            {isUploadingGame ? (
-                              <>
-                                <Loader2 size={14} className="animate-spin text-[#f8b146]" />
-                                Uploading to Public Bucket...
-                              </>
-                            ) : (
-                              <>
-                                <Upload size={14} />
-                                Choose Image File
-                              </>
-                            )}
-                          </label>
-                          {gameUploadError && (
-                            <p className="text-[10px] text-red-400 mt-2 font-sans">{gameUploadError}</p>
-                          )}
-                          <p className="text-[10px] text-[#C8B1CC]/60 mt-2 font-sans leading-normal">
-                            Directly uploads high-res assets to your secure Supabase public bucket. Supports JPG, PNG, WEBP.
-                          </p>
-                        </div>
-                        {newGameBoxImg ? (
-                          <div className="w-24 h-24 rounded-xl overflow-hidden border border-white/15 bg-cover bg-center shrink-0 shadow-inner relative group" style={{ backgroundImage: `url(${newGameBoxImg})` }}>
-                            <div className="absolute inset-0 bg-[#25102a]/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                              <button
-                                type="button"
-                                onClick={() => setNewGameBoxImg('')}
-                                className="p-1.5 rounded-full bg-red-500/20 border border-red-500/30 text-red-400 hover:bg-red-500/30 transition-all cursor-pointer"
-                                title="Remove Image"
-                              >
-                                <X size={12} />
-                              </button>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="w-24 h-24 rounded-xl border border-dashed border-white/10 flex flex-col items-center justify-center text-white/20 shrink-0 bg-[#25102a]/30">
-                            <ImageIcon size={20} />
-                            <span className="text-[9px] mt-1 font-mono uppercase tracking-wider">No Image</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Form Submission Button */}
-                  <div className="border-t border-white/10 pt-6 flex justify-end">
-                    <button
-                      type="submit"
-                      className="px-8 py-3.5 bg-gradient-to-r from-[#f8b146] to-[#f28a75] text-[#3a1d42] rounded-full font-sans font-bold text-xs uppercase tracking-widest shadow-lg shadow-[#f8b146]/15 hover:scale-[1.02] hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-300 flex items-center gap-2 cursor-pointer"
-                    >
-                      <Plus size={14} /> Archive Board Game
-                    </button>
-                  </div>
-                </form>
-              ) : activeTab === 'manageGames' ? (
-                /* TAB: MANAGE GAMES & COVER IMAGES */
-                <div className="space-y-6 text-left">
-                  {editingGame ? (
-                    /* Edit Sub-View */
-                    <form onSubmit={handleEditGameSubmit} className="space-y-6 bg-[#25102a]/30 border border-white/10 rounded-3xl p-6 md:p-8">
-                      <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
-                        <div>
-                          <span className="font-mono text-[9px] uppercase tracking-[0.15em] text-[#f8b146] font-bold block">
-                            Atelier Vault Editor
-                          </span>
-                          <h4 className="font-sans font-black text-lg text-white">
-                            Editing Cover & Details: {editingGame.title}
-                          </h4>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={handleCancelEditGame}
-                          className="py-1.5 px-4 rounded-full border border-white/10 hover:border-[#f8b146]/40 text-[#C8B1CC] hover:text-white transition-all text-xs font-semibold cursor-pointer"
-                        >
-                          Cancel
-                        </button>
+                    {/* Identity Glass Card */}
+                    <div className="bg-white/5 border border-white/10 rounded-3xl p-5 md:p-6 space-y-5 backdrop-blur-md">
+                      <div className="flex items-center gap-2 border-b border-white/5 pb-3">
+                        <Tag size={15} className="text-[#f8b146]" />
+                        <h4 className="font-sans font-bold text-sm text-white">Identity & Theme</h4>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Game Title */}
+                      {/* Game Title */}
+                      <div className="flex flex-col gap-2">
+                        <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Game Title *</label>
+                        <input
+                          type="text"
+                          value={newGameTitle}
+                          onChange={(e) => setNewGameTitle(e.target.value)}
+                          placeholder="e.g. Scythe"
+                          className="py-3 px-4 bg-[#120515]/50 border border-white/10 hover:border-white/20 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
+                          required
+                        />
+                      </div>
+
+                      {/* Themes */}
+                      <div className="flex flex-col gap-2">
+                        <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Theme & Core Mechanics</label>
+                        <input
+                          type="text"
+                          value={newGameTheme}
+                          onChange={(e) => setNewGameTheme(e.target.value)}
+                          placeholder="e.g. Dieselpunk, Strategy, Resource Grid"
+                          className="py-3 px-4 bg-[#120515]/50 border border-white/10 hover:border-white/20 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        {/* Year */}
                         <div className="flex flex-col gap-2">
-                          <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Game Title *</label>
-                          <input
-                            type="text"
-                            value={editGameTitle}
-                            onChange={(e) => setEditGameTitle(e.target.value)}
-                            placeholder="e.g. Scythe"
-                            className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
-                            required
-                          />
+                          <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Release Year</label>
+                          <div className="relative">
+                            <input
+                              type="text"
+                              value={newGameYear}
+                              onChange={(e) => setNewGameYear(e.target.value)}
+                              placeholder="e.g. 2016"
+                              className="w-full py-3 px-4 pl-9 bg-[#120515]/50 border border-white/10 hover:border-white/20 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
+                            />
+                            <History size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+                          </div>
                         </div>
 
+                        {/* Expansion */}
+                        <div className="flex flex-col gap-2">
+                          <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Expansion Version</label>
+                          <div className="relative">
+                            <input
+                              type="text"
+                              value={newGameExpansion}
+                              onChange={(e) => setNewGameExpansion(e.target.value)}
+                              placeholder="e.g. Invaders from Afar"
+                              className="w-full py-3 px-4 pl-9 bg-[#120515]/50 border border-white/10 hover:border-white/20 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
+                            />
+                            <Layers size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Gameplay Settings Glass Card */}
+                    <div className="bg-white/5 border border-white/10 rounded-3xl p-5 md:p-6 space-y-5 backdrop-blur-md">
+                      <div className="flex items-center gap-2 border-b border-white/5 pb-3">
+                        <Dices size={15} className="text-[#f8b146]" />
+                        <h4 className="font-sans font-bold text-sm text-white">Gameplay Specs</h4>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
                         {/* Complexity Type Dropdown */}
                         <div className="flex flex-col gap-2">
-                          <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Complexity Classification</label>
+                          <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Complexity</label>
                           <select
-                            value={editGameType}
-                            onChange={(e) => setEditGameType(e.target.value)}
-                            className="py-3 px-4 bg-[#25102a]/90 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white focus:outline-none transition-all duration-300 cursor-pointer"
+                            value={newGameType}
+                            onChange={(e) => setNewGameType(e.target.value)}
+                            className="py-3 px-4 bg-[#120515]/80 border border-white/10 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white focus:outline-none transition-all cursor-pointer"
                           >
                             <option value="Social" className="bg-[#25102a] text-white">Social</option>
                             <option value="Easy" className="bg-[#25102a] text-white">Easy</option>
@@ -938,11 +847,230 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
 
                         {/* Format Strategy (Competition) */}
                         <div className="flex flex-col gap-2">
-                          <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Competition Format</label>
+                          <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Interaction Format</label>
+                          <select
+                            value={newGameComp}
+                            onChange={(e) => setNewGameComp(e.target.value)}
+                            className="py-3 px-4 bg-[#120515]/80 border border-white/10 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white focus:outline-none transition-all cursor-pointer"
+                          >
+                            <option value="Competitive" className="bg-[#25102a] text-white">Competitive</option>
+                            <option value="Cooperative" className="bg-[#25102a] text-white">Cooperative</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Players count */}
+                      <div className="flex flex-col gap-2">
+                        <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Players Capacity</label>
+                        <div className="relative">
+                          <input
+                            type="text"
+                            value={newGamePlayers}
+                            onChange={(e) => setNewGamePlayers(e.target.value)}
+                            placeholder="e.g. 1 - 5 Players"
+                            className="w-full py-3 px-4 pl-9 bg-[#120515]/50 border border-white/10 hover:border-white/20 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
+                          />
+                          <Users size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+                        </div>
+                      </div>
+
+                      {/* Playtime */}
+                      <div className="flex flex-col gap-2">
+                        <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Estimated Playtime</label>
+                        <div className="relative">
+                          <input
+                            type="text"
+                            value={newGameTime}
+                            onChange={(e) => setNewGameTime(e.target.value)}
+                            placeholder="e.g. 90 - 115 Min"
+                            className="w-full py-3 px-4 pl-9 bg-[#120515]/50 border border-white/10 hover:border-white/20 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
+                          />
+                          <Clock size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Resources Links Card */}
+                  <div className="bg-white/5 border border-white/10 rounded-3xl p-5 md:p-6 space-y-4 backdrop-blur-md">
+                    <div className="flex items-center gap-2 border-b border-white/5 pb-3">
+                      <LinkIcon size={15} className="text-[#f8b146]" />
+                      <h4 className="font-sans font-bold text-sm text-white">Tutorial Media Links</h4>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {/* How to play video link */}
+                      <div className="flex flex-col gap-2">
+                        <label className="font-mono text-[9px] flex items-center gap-1.5 uppercase tracking-wider text-[#C8B1CC]/80 font-bold">
+                          <Play size={10} className="text-red-400 shrink-0" /> How-To-Play Tutorial Link
+                        </label>
+                        <input
+                          type="url"
+                          value={newGameHowToPlay}
+                          onChange={(e) => setNewGameHowToPlay(e.target.value)}
+                          placeholder="Paste YouTube tutorial URL"
+                          className="py-3 px-4 bg-[#120515]/50 border border-white/10 hover:border-white/20 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
+                        />
+                      </div>
+
+                      {/* Quick Summary video link */}
+                      <div className="flex flex-col gap-2">
+                        <label className="font-mono text-[9px] flex items-center gap-1.5 uppercase tracking-wider text-[#C8B1CC]/80 font-bold">
+                          <Film size={10} className="text-[#f8b146] shrink-0" /> Quick Summary Review Link
+                        </label>
+                        <input
+                          type="url"
+                          value={newGameQuickSummary}
+                          onChange={(e) => setNewGameQuickSummary(e.target.value)}
+                          placeholder="Paste YouTube summary URL"
+                          className="py-3 px-4 bg-[#120515]/50 border border-white/10 hover:border-white/20 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Game Box Image Upload */}
+                  <div className="bg-white/5 border border-white/10 rounded-3xl p-5 md:p-6 space-y-4 backdrop-blur-md">
+                    <div className="flex items-center gap-2 border-b border-white/5 pb-3">
+                      <ImageIcon size={15} className="text-[#f8b146]" />
+                      <h4 className="font-sans font-bold text-sm text-white">Cover Media & Uploads</h4>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-5 items-center bg-[#120515]/40 border border-white/10 p-5 rounded-2xl">
+                      <div className="flex-1 w-full text-left">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleGameImageFileChange}
+                          disabled={isUploadingGame}
+                          className="hidden"
+                          id="game-image-upload"
+                        />
+                        <label
+                          htmlFor="game-image-upload"
+                          className={`flex items-center justify-center gap-2.5 py-4 px-6 rounded-2xl border-2 border-dashed transition-all duration-300 cursor-pointer font-sans text-xs font-black text-center ${
+                            isUploadingGame
+                              ? 'bg-white/5 border-white/10 text-white/40 cursor-not-allowed'
+                              : 'bg-[#f8b146]/5 border-[#f8b146]/20 text-[#f8b146] hover:bg-[#f8b146]/10 hover:border-[#f8b146]/50 shadow-md shadow-[#f8b146]/5'
+                          }`}
+                        >
+                          {isUploadingGame ? (
+                            <>
+                              <Loader2 size={16} className="animate-spin text-[#f8b146]" />
+                              Transferring assets to Supabase storage...
+                            </>
+                          ) : (
+                            <>
+                              <Upload size={16} />
+                              Select High-Res Cover Graphic File
+                            </>
+                          )}
+                        </label>
+                        {gameUploadError && (
+                          <p className="text-[10px] text-red-400 mt-2.5 font-sans font-medium">{gameUploadError}</p>
+                        )}
+                        <p className="text-[10px] text-[#C8B1CC]/60 mt-3 font-sans leading-relaxed">
+                          Files are safely uploaded to the secured `icbg-media` Supabase bucket. Optimized image formats (JPG, PNG, WEBP) recommended.
+                        </p>
+                      </div>
+
+                      {newGameBoxImg ? (
+                        <div className="w-24 h-24 rounded-2xl overflow-hidden border border-white/15 bg-cover bg-center shrink-0 shadow-lg relative group" style={{ backgroundImage: `url(${newGameBoxImg})` }}>
+                          <div className="absolute inset-0 bg-black/75 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                            <button
+                              type="button"
+                              onClick={() => setNewGameBoxImg('')}
+                              className="p-2 rounded-full bg-red-500/20 border border-red-500/35 text-red-400 hover:bg-red-500/35 hover:text-white transition-all cursor-pointer"
+                              title="Discard Graphic"
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="w-24 h-24 rounded-2xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center text-white/20 shrink-0 bg-[#120515]/30">
+                          <ImageIcon size={22} className="opacity-40" />
+                          <span className="text-[8px] mt-1.5 font-mono uppercase tracking-wider opacity-60">Cover Placeholder</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Form Submission Button */}
+                  <div className="pt-4 flex justify-end">
+                    <button
+                      type="submit"
+                      className="px-8 py-4 bg-gradient-to-r from-[#f8b146] to-[#f28a75] text-[#25102a] rounded-2xl font-sans font-extrabold text-xs uppercase tracking-widest shadow-lg shadow-[#f8b146]/20 hover:scale-[1.01] hover:-translate-y-0.5 active:scale-[0.99] active:translate-y-0 transition-all duration-300 flex items-center gap-2.5 cursor-pointer"
+                    >
+                      <Plus size={14} /> Archive Game into Vault
+                    </button>
+                  </div>
+                </form>
+              ) : activeTab === 'manageGames' ? (
+                /* TAB: MANAGE GAMES & COVER IMAGES */
+                <div className="space-y-6 text-left">
+                  {editingGame ? (
+                    /* Edit Sub-View */
+                    <form onSubmit={handleEditGameSubmit} className="space-y-6 bg-white/5 border border-white/10 rounded-3xl p-5 md:p-8 backdrop-blur-md">
+                      
+                      {/* Editor Sub-Header */}
+                      <div className="flex items-center justify-between border-b border-white/5 pb-4 mb-4">
+                        <div className="text-left">
+                          <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-[#f8b146] font-bold block">
+                            Atelier Vault Editor
+                          </span>
+                          <h4 className="font-sans font-black text-base md:text-lg text-white">
+                            Modifying Cover & Specifications: {editingGame.title}
+                          </h4>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleCancelEditGame}
+                          className="py-1.5 px-4 rounded-xl border border-white/10 hover:border-white/20 text-[#C8B1CC] hover:text-white bg-white/5 transition-all text-xs font-semibold cursor-pointer"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+
+                      {/* Edit Fields Grid */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        {/* Game Title */}
+                        <div className="flex flex-col gap-2">
+                          <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Game Title *</label>
+                          <input
+                            type="text"
+                            value={editGameTitle}
+                            onChange={(e) => setEditGameTitle(e.target.value)}
+                            placeholder="e.g. Scythe"
+                            className="py-3 px-4 bg-[#120515]/50 border border-white/10 hover:border-white/20 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
+                            required
+                          />
+                        </div>
+
+                        {/* Complexity Type Dropdown */}
+                        <div className="flex flex-col gap-2">
+                          <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Complexity Classification</label>
+                          <select
+                            value={editGameType}
+                            onChange={(e) => setEditGameType(e.target.value)}
+                            className="py-3 px-4 bg-[#120515]/80 border border-white/10 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white focus:outline-none transition-all cursor-pointer"
+                          >
+                            <option value="Social" className="bg-[#25102a] text-white">Social</option>
+                            <option value="Easy" className="bg-[#25102a] text-white">Easy</option>
+                            <option value="Light" className="bg-[#25102a] text-white">Light</option>
+                            <option value="Medium" className="bg-[#25102a] text-white">Medium</option>
+                            <option value="Heavy" className="bg-[#25102a] text-white">Heavy</option>
+                          </select>
+                        </div>
+
+                        {/* Format Strategy (Competition) */}
+                        <div className="flex flex-col gap-2">
+                          <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Competition Format</label>
                           <select
                             value={editGameComp}
                             onChange={(e) => setEditGameComp(e.target.value)}
-                            className="py-3 px-4 bg-[#25102a]/90 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white focus:outline-none transition-all duration-300 cursor-pointer"
+                            className="py-3 px-4 bg-[#120515]/80 border border-white/10 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white focus:outline-none transition-all cursor-pointer"
                           >
                             <option value="Competitive" className="bg-[#25102a] text-white">Competitive</option>
                             <option value="Cooperative" className="bg-[#25102a] text-white">Cooperative</option>
@@ -951,98 +1079,98 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
 
                         {/* Themes */}
                         <div className="flex flex-col gap-2">
-                          <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Theme / Mechanics</label>
+                          <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Theme / Mechanics</label>
                           <input
                             type="text"
                             value={editGameTheme}
                             onChange={(e) => setEditGameTheme(e.target.value)}
                             placeholder="e.g. Strategy, Resource Management"
-                            className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
+                            className="py-3 px-4 bg-[#120515]/50 border border-white/10 hover:border-white/20 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
                           />
                         </div>
 
                         {/* Players count */}
                         <div className="flex flex-col gap-2">
-                          <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Players Count</label>
+                          <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Players Count</label>
                           <input
                             type="text"
                             value={editGamePlayers}
                             onChange={(e) => setEditGamePlayers(e.target.value)}
                             placeholder="e.g. 1 - 5"
-                            className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
+                            className="py-3 px-4 bg-[#120515]/50 border border-white/10 hover:border-white/20 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
                           />
                         </div>
 
                         {/* Playtime */}
                         <div className="flex flex-col gap-2">
-                          <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Playtime</label>
+                          <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Playtime</label>
                           <input
                             type="text"
                             value={editGameTime}
                             onChange={(e) => setEditGameTime(e.target.value)}
                             placeholder="e.g. 90 - 115 Min"
-                            className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
+                            className="py-3 px-4 bg-[#120515]/50 border border-white/10 hover:border-white/20 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
                           />
                         </div>
 
                         {/* Year */}
                         <div className="flex flex-col gap-2">
-                          <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Release Year</label>
+                          <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Release Year</label>
                           <input
                             type="text"
                             value={editGameYear}
                             onChange={(e) => setEditGameYear(e.target.value)}
                             placeholder="e.g. 2016"
-                            className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
+                            className="py-3 px-4 bg-[#120515]/50 border border-white/10 hover:border-white/20 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
                           />
                         </div>
 
                         {/* Expansion */}
                         <div className="flex flex-col gap-2">
-                          <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Expansion</label>
+                          <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Expansion</label>
                           <input
                             type="text"
                             value={editGameExpansion}
                             onChange={(e) => setEditGameExpansion(e.target.value)}
                             placeholder="e.g. None"
-                            className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
+                            className="py-3 px-4 bg-[#120515]/50 border border-white/10 hover:border-white/20 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
                           />
                         </div>
 
                         {/* How to play video link */}
                         <div className="flex flex-col gap-2">
-                          <label className="font-mono text-[9px] flex items-center gap-1 uppercase tracking-wider text-[#C8B1CC]/80">
-                            <Play size={10} className="text-[#f8b146]" /> How-To-Play YouTube Link
+                          <label className="font-mono text-[9px] flex items-center gap-1.5 uppercase tracking-wider text-[#C8B1CC]/80 font-bold">
+                            <Play size={10} className="text-red-400 shrink-0" /> How-To-Play YouTube Link
                           </label>
                           <input
                             type="url"
                             value={editGameHowToPlay}
                             onChange={(e) => setEditGameHowToPlay(e.target.value)}
                             placeholder="YouTube tutorial URL"
-                            className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
+                            className="py-3 px-4 bg-[#120515]/50 border border-white/10 hover:border-white/20 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
                           />
                         </div>
 
                         {/* Quick Summary video link */}
                         <div className="flex flex-col gap-2">
-                          <label className="font-mono text-[9px] flex items-center gap-1 uppercase tracking-wider text-[#C8B1CC]/80">
-                            <Film size={10} className="text-[#f8b146]" /> Quick Summary YouTube Link
+                          <label className="font-mono text-[9px] flex items-center gap-1.5 uppercase tracking-wider text-[#C8B1CC]/80 font-bold">
+                            <Film size={10} className="text-[#f8b146] shrink-0" /> Quick Summary YouTube Link
                           </label>
                           <input
                             type="url"
                             value={editGameQuickSummary}
                             onChange={(e) => setEditGameQuickSummary(e.target.value)}
                             placeholder="YouTube summary URL"
-                            className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
+                            className="py-3 px-4 bg-[#120515]/50 border border-white/10 hover:border-white/20 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
                           />
                         </div>
 
                         {/* Box Image Upload / Direct Link Input */}
-                        <div className="flex flex-col gap-2 col-span-1 md:col-span-2 border-t border-white/10 pt-4 mt-2">
-                          <label className="font-mono text-[9px] flex items-center gap-1 uppercase tracking-wider text-[#C8B1CC]/80">
-                            <ImageIcon size={10} className="text-[#f8b146]" /> Cover image file upload (Supabase Bucket) or Image URL
+                        <div className="flex flex-col gap-2 col-span-1 md:col-span-2 border-t border-white/5 pt-4 mt-2">
+                          <label className="font-mono text-[9px] flex items-center gap-1 uppercase tracking-wider text-[#C8B1CC]/80 font-bold">
+                            <ImageIcon size={10} className="text-[#f8b146] shrink-0" /> Cover image file upload (Supabase Bucket) or Image URL
                           </label>
-                          <div className="flex flex-col sm:flex-row gap-4 items-center bg-[#25102a]/45 border border-white/10 p-4 rounded-2xl">
+                          <div className="flex flex-col sm:flex-row gap-4 items-center bg-[#120515]/45 border border-white/10 p-4 rounded-xl">
                             <div className="flex-1 w-full text-left">
                               <input
                                 type="file"
@@ -1081,14 +1209,14 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
                                   placeholder="Or paste an external Image URL instead..."
                                   value={editGameBoxImg}
                                   onChange={(e) => setEditGameBoxImg(e.target.value)}
-                                  className="w-full py-2.5 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all"
+                                  className="w-full py-2.5 px-4 bg-[#120515]/50 border border-white/10 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all"
                                 />
                               </div>
                             </div>
                             
                             {editGameBoxImg ? (
                               <div className="w-24 h-24 rounded-xl overflow-hidden border border-white/15 bg-cover bg-center shrink-0 shadow-inner relative group" style={{ backgroundImage: `url(${editGameBoxImg})` }}>
-                                <div className="absolute inset-0 bg-[#25102a]/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                <div className="absolute inset-0 bg-black/75 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                                   <button
                                     type="button"
                                     onClick={() => setEditGameBoxImg('')}
@@ -1100,7 +1228,7 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
                                 </div>
                               </div>
                             ) : (
-                              <div className="w-24 h-24 rounded-xl border border-dashed border-white/10 flex flex-col items-center justify-center text-white/20 shrink-0 bg-[#25102a]/30">
+                              <div className="w-24 h-24 rounded-xl border border-dashed border-white/10 flex flex-col items-center justify-center text-white/20 shrink-0 bg-[#120515]/30">
                                 <ImageIcon size={20} />
                                 <span className="text-[9px] mt-1 font-mono uppercase tracking-wider">No Image</span>
                               </div>
@@ -1109,20 +1237,20 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
                         </div>
                       </div>
 
-                      {/* Submit */}
-                      <div className="border-t border-white/10 pt-6 flex justify-end gap-3">
+                      {/* Submit / Cancel Actions */}
+                      <div className="border-t border-white/5 pt-6 flex justify-end gap-3">
                         <button
                           type="button"
                           onClick={handleCancelEditGame}
-                          className="px-6 py-3 rounded-full border border-white/10 hover:border-white/25 text-[#C8B1CC] hover:text-white transition-all text-xs font-sans font-bold cursor-pointer"
+                          className="px-6 py-3.5 bg-transparent border border-white/10 hover:border-white/20 hover:bg-white/5 text-[#C8B1CC] hover:text-white rounded-xl transition-all text-xs font-sans font-bold cursor-pointer"
                         >
-                          Cancel
+                          Discard
                         </button>
                         <button
                           type="submit"
-                          className="px-8 py-3 bg-gradient-to-r from-[#f8b146] to-[#f28a75] text-[#3a1d42] rounded-full font-sans font-bold text-xs uppercase tracking-widest shadow-lg shadow-[#f8b146]/15 hover:scale-[1.02] hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-300 flex items-center gap-2 cursor-pointer"
+                          className="px-8 py-3.5 bg-gradient-to-r from-[#f8b146] to-[#f28a75] text-[#25102a] rounded-xl font-sans font-extrabold text-xs uppercase tracking-widest shadow-lg shadow-[#f8b146]/20 hover:scale-[1.01] hover:-translate-y-0.5 active:scale-[0.99] active:translate-y-0 transition-all duration-300 flex items-center gap-2 cursor-pointer"
                         >
-                          <Save size={14} /> Save Game Cover & Details
+                          <Save size={14} /> Update specs
                         </button>
                       </div>
                     </form>
@@ -1130,57 +1258,65 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
                     /* Directory List View */
                     <div className="space-y-4">
                       {/* Search Bar */}
-                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-4">
-                        <div>
-                          <h4 className="font-sans font-bold text-sm text-white">Board Games Vault Directory</h4>
-                          <p className="font-sans text-[10px] text-[#C8B1CC]">Select any game to upload a new cover image or update its characteristics</p>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-4">
+                        <div className="text-left">
+                          <h4 className="font-sans font-bold text-sm text-white">Board Games Directory</h4>
+                          <p className="font-sans text-[10px] text-[#C8B1CC]/80">Manage physical game details, tutorial links, and graphics</p>
                         </div>
                         
-                        <div className="relative w-full md:max-w-xs">
+                        <div className="relative w-full sm:max-w-xs">
                           <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-white/30">
                             <Search size={14} />
                           </div>
                           <input
                             type="text"
-                            placeholder="Search board games..."
+                            placeholder="Quick lookup by title..."
                             value={manageGameSearch}
                             onChange={(e) => setManageGameSearch(e.target.value)}
-                            className="w-full py-2.5 pl-11 pr-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] text-white placeholder-white/30 rounded-xl font-sans text-xs focus:outline-none transition-all duration-300"
+                            className="w-full py-2.5 pl-11 pr-4 bg-[#120515]/40 border border-white/10 focus:border-[#f8b146] text-white placeholder-white/30 rounded-xl font-sans text-xs focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
                           />
                         </div>
                       </div>
 
-                      {/* Scrollable list */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[480px] overflow-y-auto pr-1">
+                      {/* Directory cards grid */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-h-[460px] overflow-y-auto pr-1 custom-scrollbar">
                         {games
                           .filter(game => game.title.toLowerCase().includes(manageGameSearch.toLowerCase()) || game.theme.toLowerCase().includes(manageGameSearch.toLowerCase()))
                           .map((game, idx) => {
                             const initials = game.title.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
+                            
+                            // Map complexity to aesthetic badge colors
+                            let typeBadgeStyle = 'bg-white/5 border-white/10 text-white/70';
+                            if (game.type === 'Heavy') typeBadgeStyle = 'bg-red-500/10 border-red-500/20 text-red-300';
+                            else if (game.type === 'Medium') typeBadgeStyle = 'bg-amber-500/10 border-amber-500/20 text-amber-300';
+                            else if (game.type === 'Light') typeBadgeStyle = 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300';
+                            else if (game.type === 'Social') typeBadgeStyle = 'bg-[#f8b146]/10 border-[#f8b146]/20 text-[#f8b146]';
+
                             return (
                               <div 
                                 key={game.num || idx} 
-                                className="bg-[#25102a]/45 border border-white/8 rounded-[1.8rem] p-4 flex gap-4 items-center justify-between transition-all duration-300 hover:border-[#f8b146]/35"
+                                className="bg-[#120515]/45 border border-white/5 hover:border-[#f8b146]/35 rounded-[1.8rem] p-4 flex gap-4 items-center justify-between transition-all duration-300 hover:shadow-[0_8px_20px_-8px_rgba(248,177,70,0.15)] group relative"
                               >
-                                <div className="flex items-center gap-3 overflow-hidden">
+                                <div className="flex items-center gap-3 overflow-hidden text-left">
                                   {game.box_img || game.play_img ? (
                                     <div 
-                                      className="w-12 h-12 rounded-xl bg-cover bg-center bg-[#25102a]/50 border border-white/10 shrink-0" 
+                                      className="w-12 h-12 rounded-xl bg-cover bg-center bg-[#120515]/50 border border-white/10 shrink-0 group-hover:scale-105 transition-transform duration-300" 
                                       style={{ backgroundImage: `url(${game.box_img || game.play_img})` }} 
                                     />
                                   ) : (
-                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#3a1d42]/40 to-[#25102a]/20 border border-[#f8b146]/20 text-[#f8b146] flex items-center justify-center shrink-0 font-mono text-xs font-black">
+                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#3a1d42]/30 to-[#120515]/40 border border-[#f8b146]/20 text-[#f8b146] flex items-center justify-center shrink-0 font-mono text-xs font-black shadow-inner">
                                       {initials}
                                     </div>
                                   )}
-                                  <div className="text-left overflow-hidden">
-                                    <h5 className="font-sans font-bold text-xs text-white truncate max-w-[150px]" title={game.title}>
+                                  <div className="overflow-hidden">
+                                    <h5 className="font-sans font-bold text-xs text-white truncate max-w-[140px] group-hover:text-[#f8b146] transition-colors" title={game.title}>
                                       {game.title}
                                     </h5>
-                                    <div className="flex gap-2 items-center mt-1">
-                                      <span className="font-mono text-[8px] uppercase px-1.5 py-0.2 bg-[#f8b146]/10 text-[#f8b146] rounded border border-[#f8b146]/15">
+                                    <div className="flex gap-1.5 items-center mt-1.5 flex-wrap">
+                                      <span className={`font-mono text-[7px] uppercase px-2 py-0.5 rounded-full border ${typeBadgeStyle}`}>
                                         {game.type}
                                       </span>
-                                      <span className="font-mono text-[8px] text-[#C8B1CC] font-bold">
+                                      <span className="font-mono text-[8px] text-[#C8B1CC]/60 font-bold">
                                         {game.year}
                                       </span>
                                     </div>
@@ -1190,8 +1326,8 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
                                 <button
                                   type="button"
                                   onClick={() => handleStartEditGame(game)}
-                                  className="p-2.5 rounded-xl border border-white/10 hover:border-[#f8b146]/45 text-[#C8B1CC] hover:text-[#f8b146] bg-white/5 hover:bg-[#f8b146]/5 transition-all duration-300 cursor-pointer shrink-0"
-                                  title="Edit Cover & Details"
+                                  className="p-2.5 rounded-xl border border-white/10 hover:border-[#f8b146]/45 text-[#C8B1CC] hover:text-[#f8b146] bg-white/5 hover:bg-[#f8b146]/10 transition-all duration-300 cursor-pointer shrink-0"
+                                  title="Edit Specs & Cover"
                                 >
                                   <Pencil size={12} />
                                 </button>
@@ -1201,7 +1337,7 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
                         
                         {games.filter(game => game.title.toLowerCase().includes(manageGameSearch.toLowerCase()) || game.theme.toLowerCase().includes(manageGameSearch.toLowerCase())).length === 0 && (
                           <div className="col-span-full py-12 text-center text-[#C8B1CC]/40 border border-dashed border-white/10 rounded-2xl">
-                            <Dices size={24} className="mx-auto mb-3 opacity-30 animate-bounce" />
+                            <Dices size={24} className="mx-auto mb-3 opacity-30 animate-bounce text-[#f8b146]" />
                             <p className="font-sans text-xs">No matching games found in repository.</p>
                           </div>
                         )}
@@ -1212,16 +1348,22 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
               ) : activeTab === 'gallery' ? (
                 /* TAB 3: GALLERY MANAGEMENT */
                 <div className="space-y-6 text-left">
+                  
                   {/* Add new image form */}
-                  <div className="bg-[#25102a]/30 border border-white/10 rounded-2xl p-6 space-y-4">
-                    <h4 className="font-sans font-bold text-sm text-white flex items-center gap-2">
-                      <ImageIcon size={14} className="text-[#f8b146]" /> {editingImageIndex !== null ? 'Edit Gallery Image' : 'Add New Gallery Image'}
-                    </h4>
+                  <div className="bg-white/5 border border-white/10 rounded-3xl p-5 md:p-6 space-y-5 backdrop-blur-md">
+                    <div className="flex items-center gap-2 border-b border-white/5 pb-3">
+                      <ImageIcon size={15} className="text-[#f8b146]" />
+                      <h4 className="font-sans font-bold text-sm text-white">
+                        {editingImageIndex !== null ? 'Modify Gallery Item' : 'Ingest New Photo to Gallery'}
+                      </h4>
+                    </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="flex flex-col gap-2 col-span-1 md:col-span-2 bg-[#25102a]/40 border border-white/10 p-4 rounded-2xl">
-                        <label className="font-mono text-[9px] flex items-center gap-1 uppercase tracking-wider text-[#C8B1CC]/80">
-                          <Upload size={10} className="text-[#f8b146]" /> Gallery Photo File Upload
+                      
+                      {/* Photo file upload dropzone */}
+                      <div className="flex flex-col gap-2 col-span-1 md:col-span-2 bg-[#120515]/40 border border-white/10 p-4 rounded-2xl">
+                        <label className="font-mono text-[9px] flex items-center gap-1.5 uppercase tracking-wider text-[#C8B1CC]/80 font-bold">
+                          <Upload size={10} className="text-[#f8b146]" /> File Uploader
                         </label>
                         <div className="flex flex-col sm:flex-row gap-4 items-center w-full">
                           <div className="flex-1 w-full text-left">
@@ -1238,18 +1380,18 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
                               className={`flex items-center justify-center gap-2 py-3 px-6 rounded-xl border border-dashed transition-all duration-300 cursor-pointer font-sans text-xs font-semibold text-center ${
                                 isUploadingGallery
                                   ? 'bg-white/5 border-white/10 text-white/40 cursor-not-allowed'
-                                  : 'bg-[#f8b146]/5 border-[#f8b146]/30 text-[#f8b146] hover:bg-[#f8b146]/10 hover:border-[#f8b146]/50 shadow-sm shadow-[#f8b146]/5'
+                                  : 'bg-[#f8b146]/5 border-[#f8b146]/20 text-[#f8b146] hover:bg-[#f8b146]/10 hover:border-[#f8b146]/45 shadow-sm shadow-[#f8b146]/5'
                               }`}
                             >
                               {isUploadingGallery ? (
                                 <>
                                   <Loader2 size={14} className="animate-spin text-[#f8b146]" />
-                                  Uploading to Bucket...
+                                  Uploading file to bucket...
                                 </>
                               ) : (
                                 <>
                                   <Upload size={14} />
-                                  Select Photo File
+                                  Upload Photo File
                                 </>
                               )}
                             </label>
@@ -1262,30 +1404,32 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
                               type="url"
                               value={galleryUrl}
                               onChange={(e) => setGalleryUrl(e.target.value)}
-                              placeholder="Or paste an external Image URL instead..."
-                              className="w-full py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
+                              placeholder="Or paste external photo link URL..."
+                              className="w-full py-3 px-4 bg-[#120515]/50 border border-white/10 hover:border-white/20 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
                             />
                           </div>
                         </div>
                       </div>
                       
+                      {/* Image title */}
                       <div className="flex flex-col gap-2">
-                        <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Image Title *</label>
+                        <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Image Title *</label>
                         <input
                           type="text"
                           value={galleryTitle}
                           onChange={(e) => setGalleryTitle(e.target.value)}
-                          placeholder="e.g. Game Night Legends"
-                          className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300"
+                          placeholder="e.g. Social Deduction Clashes"
+                          className="py-3 px-4 bg-[#120515]/50 border border-white/10 hover:border-white/20 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 focus:ring-1 focus:ring-[#f8b146]/20"
                         />
                       </div>
                       
+                      {/* Category Selector */}
                       <div className="flex flex-col gap-2">
-                        <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Category</label>
+                        <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Category</label>
                         <select
                           value={galleryCategory}
                           onChange={(e) => setGalleryCategory(e.target.value)}
-                          className="py-3 px-4 bg-[#25102a]/90 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white focus:outline-none transition-all duration-300 cursor-pointer"
+                          className="py-3 px-4 bg-[#120515]/80 border border-white/10 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white focus:outline-none transition-all cursor-pointer"
                         >
                           <option value="Play Session" className="bg-[#25102a] text-white">Play Session</option>
                           <option value="Atelier Vibe" className="bg-[#25102a] text-white">Atelier Vibe</option>
@@ -1296,53 +1440,70 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
                         </select>
                       </div>
                       
+                      {/* Aspect Ratio */}
                       <div className="flex flex-col gap-2">
-                        <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Aspect Ratio</label>
+                        <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Frame Aspect Ratio</label>
                         <select
                           value={galleryAspect}
                           onChange={(e) => setGalleryAspect(e.target.value)}
-                          className="py-3 px-4 bg-[#25102a]/90 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white focus:outline-none transition-all duration-300 cursor-pointer"
+                          className="py-3 px-4 bg-[#120515]/80 border border-white/10 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white focus:outline-none transition-all cursor-pointer"
                         >
                           <option value="aspect-[3/4]" className="bg-[#25102a] text-white">Vertical (Portrait 3:4)</option>
-                          <option value="aspect-square" className="bg-[#25102a] text-white">Square</option>
+                          <option value="aspect-square" className="bg-[#25102a] text-white">Square (1:1)</option>
                           <option value="aspect-[4/3]" className="bg-[#25102a] text-white">Horizontal (Landscape 4:3)</option>
                         </select>
                       </div>
+
+                      {/* Visibility Toggle */}
+                      <div className="flex flex-col gap-2 justify-center bg-[#120515]/30 border border-white/5 p-4 rounded-xl">
+                        <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/85 font-bold">Homepage Visibility</label>
+                        <label className="flex items-center gap-3 cursor-pointer py-1 select-none">
+                          <input
+                            type="checkbox"
+                            checked={galleryShowOnHomepage}
+                            onChange={(e) => setGalleryShowOnHomepage(e.target.checked)}
+                            className="w-4 h-4 rounded border-white/20 text-[#f8b146] focus:ring-[#f8b146]/20 bg-[#120515]/60 cursor-pointer"
+                          />
+                          <span className="font-sans text-xs text-white font-medium">Show in Landing Carousel Slider</span>
+                        </label>
+                      </div>
                     </div>
                     
+                    {/* Desc */}
                     <div className="flex flex-col gap-2">
-                      <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80">Description</label>
+                      <label className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/80 font-bold">Caption Description</label>
                       <textarea
                         value={galleryDesc}
                         onChange={(e) => setGalleryDesc(e.target.value)}
-                        placeholder="Short description of the photo..."
+                        placeholder="Provide details about the gathering or activity captured..."
                         rows={2}
-                        className="py-3 px-4 bg-[#25102a]/60 border border-white/15 focus:border-[#f8b146] rounded-2xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 resize-none"
+                        className="py-3 px-4 bg-[#120515]/50 border border-white/10 hover:border-white/20 focus:border-[#f8b146] rounded-xl font-sans text-xs text-white placeholder-white/30 focus:outline-none transition-all duration-300 resize-none focus:ring-1 focus:ring-[#f8b146]/20"
                       />
                     </div>
                     
-                    {/* Preview */}
+                    {/* Live Preview panel */}
                     {galleryUrl && (
-                      <div className="border border-white/10 rounded-2xl p-3 bg-[#25102a]/30">
-                        <p className="font-mono text-[9px] uppercase tracking-wider text-[#C8B1CC]/40 mb-2">Image Preview</p>
+                      <div className="border border-white/10 rounded-2xl p-4 bg-[#120515]/30 flex flex-col items-center">
+                        <p className="font-mono text-[8px] uppercase tracking-wider text-[#C8B1CC]/50 mb-2 self-start font-bold">Ingested Media Preview</p>
                         <img
                           src={galleryUrl}
                           alt="Preview"
-                          className="w-full max-h-40 object-cover rounded-xl border border-white/10"
+                          className="max-h-40 rounded-xl object-contain border border-white/10 shadow-lg"
                           onError={(e) => { e.target.style.display = 'none'; }}
                         />
                       </div>
                     )}
                     
+                    {/* Save actions */}
                     <div className="flex justify-end gap-3">
                       {editingImageIndex !== null ? (
                         <>
                           <button
                             type="button"
                             onClick={clearGalleryForm}
-                            className="px-6 py-3.5 bg-[#25102a]/60 border border-white/10 hover:border-white/20 text-white rounded-full font-sans font-bold text-xs uppercase tracking-widest transition-all duration-300 cursor-pointer"
+                            className="px-6 py-3.5 bg-transparent border border-white/10 hover:border-white/20 text-white rounded-xl font-sans font-bold text-xs uppercase tracking-widest transition-all duration-300 cursor-pointer"
                           >
-                            Cancel
+                            Discard
                           </button>
                           <button
                             type="button"
@@ -1356,15 +1517,16 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
                                 title: galleryTitle,
                                 category: galleryCategory,
                                 aspect: galleryAspect,
-                                desc: galleryDesc || 'A captured moment from our community gatherings.'
+                                desc: galleryDesc || 'A captured moment from our community gatherings.',
+                                show_on_homepage: galleryShowOnHomepage
                               });
                               clearGalleryForm();
                               setFormSuccess('Image updated successfully!');
                               setTimeout(() => setFormSuccess(''), 3000);
                             }}
-                            className="px-8 py-3.5 bg-gradient-to-r from-[#f8b146] to-[#f28a75] text-[#3a1d42] rounded-full font-sans font-bold text-xs uppercase tracking-widest shadow-lg shadow-[#f8b146]/15 hover:scale-[1.02] hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-300 flex items-center gap-2 cursor-pointer"
+                            className="px-8 py-3.5 bg-gradient-to-r from-[#f8b146] to-[#f28a75] text-[#25102a] rounded-xl font-sans font-extrabold text-xs uppercase tracking-widest shadow-lg shadow-[#f8b146]/20 hover:scale-[1.01] hover:-translate-y-0.5 active:scale-[0.99] active:translate-y-0 transition-all duration-300 flex items-center gap-2 cursor-pointer"
                           >
-                            <Save size={14} /> Save Changes
+                            <Save size={14} /> Commit Changes
                           </button>
                         </>
                       ) : (
@@ -1380,45 +1542,53 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
                               title: galleryTitle,
                               category: galleryCategory,
                               aspect: galleryAspect,
-                              desc: galleryDesc || 'A captured moment from our community gatherings.'
+                              desc: galleryDesc || 'A captured moment from our community gatherings.',
+                              show_on_homepage: galleryShowOnHomepage
                             });
                             clearGalleryForm();
                             setFormSuccess('Image added to gallery successfully!');
                             setTimeout(() => setFormSuccess(''), 3000);
                           }}
-                          className="px-8 py-3.5 bg-gradient-to-r from-[#f8b146] to-[#f28a75] text-[#3a1d42] rounded-full font-sans font-bold text-xs uppercase tracking-widest shadow-lg shadow-[#f8b146]/15 hover:scale-[1.02] hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-300 flex items-center gap-2 cursor-pointer"
+                          className="px-8 py-3.5 bg-gradient-to-r from-[#f8b146] to-[#f28a75] text-[#25102a] rounded-xl font-sans font-extrabold text-xs uppercase tracking-widest shadow-lg shadow-[#f8b146]/20 hover:scale-[1.01] hover:-translate-y-0.5 active:scale-[0.99] active:translate-y-0 transition-all duration-300 flex items-center gap-2.5 cursor-pointer"
                         >
-                          <Plus size={14} /> Add Photo
+                          <Plus size={14} /> Append to gallery
                         </button>
                       )}
                     </div>
                   </div>
                   
-                  {/* Existing gallery images list */}
+                  {/* Gallery items list */}
                   {galleryImages && galleryImages.length > 0 && (
                     <div className="space-y-3">
-                      <h4 className="font-sans font-bold text-sm text-white">Current Gallery Photos ({galleryImages.length})</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <h4 className="font-sans font-bold text-sm text-white">Current Gallery Reel ({galleryImages.length})</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[360px] overflow-y-auto pr-1 custom-scrollbar">
                         {galleryImages.map((img, idx) => (
-                          <div key={idx} className="flex items-center gap-3 bg-[#25102a]/30 border border-white/10 rounded-2xl p-3 group hover:border-[#f8b146]/35 hover:shadow-sm transition-all duration-300">
+                          <div key={idx} className="flex items-center gap-3 bg-[#120515]/30 border border-white/5 rounded-2xl p-3 hover:border-[#f8b146]/35 transition-all duration-300 relative group">
                             <img
                               src={img.src}
                               alt={img.title}
-                              className="w-16 h-16 rounded-xl object-cover border border-white/10 shrink-0"
-                              onError={(e) => { e.target.src = ''; e.target.className = 'w-16 h-16 rounded-xl bg-[#f8b146]/10 border border-[#f8b146]/25 shrink-0'; }}
+                              className="w-16 h-16 rounded-xl object-cover border border-white/10 shrink-0 shadow"
+                              onError={(e) => { e.target.src = ''; e.target.className = 'w-16 h-16 rounded-xl bg-[#f8b146]/10 border border-[#f8b146]/25 shrink-0 flex items-center justify-center'; }}
                             />
                             <div className="flex-1 min-w-0 text-left">
                               <p className="font-sans font-bold text-xs text-white truncate">{img.title}</p>
-                              <p className="font-mono text-[9px] text-[#C8B1CC]">{img.category}</p>
+                              <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                                <span className="font-mono text-[8px] bg-white/5 border border-white/10 text-[#C8B1CC]/80 px-2 py-0.5 rounded-full">{img.category}</span>
+                                {img.show_on_homepage !== false && (
+                                  <span className="font-mono text-[8px] bg-gradient-to-r from-[#f8b146]/10 to-[#f28a75]/10 border border-[#f8b146]/35 text-[#f8b146] px-2 py-0.5 rounded-full uppercase shrink-0 font-bold tracking-wider">
+                                    Homepage
+                                  </span>
+                                )}
+                              </div>
                             </div>
                             <div className="flex gap-1.5 shrink-0">
                               <button
                                 type="button"
                                 onClick={() => handleStartEditGalleryImage(idx)}
-                                className={`w-8 h-8 rounded-full border flex items-center justify-center cursor-pointer transition-all ${
+                                className={`w-8 h-8 rounded-lg border flex items-center justify-center cursor-pointer transition-all ${
                                   editingImageIndex === idx
                                     ? 'bg-[#f8b146]/20 border-[#f8b146] text-[#f8b146]'
-                                    : 'border-white/10 text-white/30 hover:text-[#f8b146] hover:border-[#f8b146]/40 hover:bg-[#f8b146]/10'
+                                    : 'border-white/10 text-white/40 hover:text-[#f8b146] hover:border-[#f8b146]/45 hover:bg-[#f8b146]/10'
                                 }`}
                                 title="Edit Photo"
                               >
@@ -1436,7 +1606,7 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
                                   setFormSuccess('Photo removed from gallery successfully.');
                                   setTimeout(() => setFormSuccess(''), 3000);
                                 }}
-                                className="w-8 h-8 rounded-full border border-white/10 hover:border-red-500/40 text-white/30 hover:text-red-400 hover:bg-red-950/30 transition-all flex items-center justify-center shrink-0 cursor-pointer"
+                                className="w-8 h-8 rounded-lg border border-white/10 hover:border-red-500/40 text-white/40 hover:text-red-400 hover:bg-red-950/25 transition-all flex items-center justify-center shrink-0 cursor-pointer"
                                 title="Delete Photo"
                               >
                                 <Trash2 size={12} />
@@ -1450,11 +1620,11 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
                 </div>
               ) : activeTab === 'applicants' ? (
                 /* TAB 4: APPLICANTS LIST */
-                <div className="space-y-6 text-left">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 border-b border-white/10 pb-4">
-                    <div>
-                      <h4 className="font-sans font-bold text-sm text-white">Submitted Club Applications</h4>
-                      <p className="font-sans text-[10px] text-[#C8B1CC]">Review and manage onboarding requests from potential club members</p>
+                <div className="space-y-6 text-left animate-fadeIn">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-4">
+                    <div className="text-left">
+                      <h4 className="font-sans font-bold text-sm text-white">Club Onboarding Applicants</h4>
+                      <p className="font-sans text-[10px] text-[#C8B1CC]/80">Review boarding passports and category preferences for active club applicants</p>
                     </div>
                     {applicantsList && applicantsList.length > 0 && (
                       <button
@@ -1475,39 +1645,49 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
                             }
                           }
                         }}
-                        className="py-2 px-4 rounded-xl border border-red-500/30 text-red-400 hover:bg-red-500/10 font-mono text-[9px] uppercase tracking-wider transition-all cursor-pointer inline-flex items-center gap-1.5"
+                        className="py-2.5 px-4 rounded-xl border border-red-500/30 text-red-400 hover:bg-red-500/10 font-mono text-[9px] uppercase tracking-wider font-extrabold transition-all cursor-pointer inline-flex items-center gap-2"
                       >
-                        <Trash2 size={10} /> Clear All
+                        <Trash2 size={12} /> Clear Database
                       </button>
                     )}
                   </div>
 
-                  <div className="space-y-4 max-h-[400px] overflow-y-auto pr-1">
+                  <div className="space-y-4 max-h-[440px] overflow-y-auto pr-1 custom-scrollbar">
                     {applicantsList && applicantsList.length > 0 ? (
                       applicantsList.map((app) => (
                         <div 
                           key={app.id}
-                          className="bg-[#25102a]/65 border border-white/8 rounded-[1.8rem] p-5 relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all duration-300 hover:border-[#f8b146]/35"
+                          className="bg-[#120515]/60 border border-white/5 hover:border-[#f8b146]/35 rounded-[1.8rem] p-5 relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all duration-300 hover:shadow-[0_10px_25px_-10px_rgba(248,177,70,0.1)] group"
                         >
-                          <div className="space-y-2 max-w-md">
+                          <div className="space-y-3 max-w-lg text-left">
                             <div className="flex items-center gap-3">
-                              <span className="font-bold text-white text-sm">{app.fullName}</span>
-                              <span className="font-mono text-[8px] uppercase px-2.5 py-0.5 rounded-full bg-[#f8b146]/10 border border-[#f8b146]/20 text-[#f8b146]">
-                                Applicant
+                              <span className="font-sans font-black text-sm text-white group-hover:text-[#f8b146] transition-colors">{app.fullName}</span>
+                              <span className="font-mono text-[7px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#f8b146]/10 border border-[#f8b146]/20 text-[#f8b146] font-bold">
+                                Member Applicant
                               </span>
                             </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-[11px] text-[#C8B1CC]">
-                              <div><span className="opacity-50 font-mono">Email:</span> {app.email}</div>
-                              <div><span className="opacity-50 font-mono">Phone:</span> {app.phone}</div>
+                            
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 text-xs text-[#C8B1CC] font-medium">
+                              <div className="flex items-center gap-2">
+                                <Mail size={12} className="text-[#f8b146]/60 shrink-0" />
+                                <span>{app.email}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Phone size={12} className="text-[#f8b146]/60 shrink-0" />
+                                <span>{app.phone}</span>
+                              </div>
                             </div>
-                            <div className="text-[11px] text-[#C8B1CC]">
-                              <span className="opacity-50 font-mono">Preferred Categories:</span>{' '}
-                              <span className="text-[#f8b146] font-medium">
+
+                            <div className="text-xs text-[#C8B1CC] bg-[#120515]/40 border border-white/5 p-3 rounded-xl">
+                              <span className="opacity-50 font-mono text-[9px] uppercase tracking-wider block mb-1">Preferred Game Categories</span>
+                              <span className="text-[#f8b146] font-bold">
                                 {app.gameTypes && app.gameTypes.join(', ')}
                               </span>
                             </div>
-                            <div className="text-[9px] font-mono text-white/30">
-                              Submitted on: {new Date(app.date).toLocaleString()}
+
+                            <div className="text-[9px] font-mono text-white/30 flex items-center gap-1.5">
+                              <Calendar size={10} />
+                              <span>Submitted: {new Date(app.date).toLocaleString()}</span>
                             </div>
                           </div>
                           
@@ -1516,7 +1696,7 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
                               const updated = applicantsList.filter(item => item.id !== app.id);
                               localStorage.setItem('ibgc_applications', JSON.stringify(updated));
                               setApplicantsList(updated);
-                              setFormSuccess(`Removed application from "${app.fullName}"`);
+                              setFormSuccess(`Dismissed club onboarding request from: "${app.fullName}"`);
                               setTimeout(() => setFormSuccess(''), 3000);
 
                               if (isSupabaseConfigured) {
@@ -1528,17 +1708,17 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
                                 }
                               }
                             }}
-                            className="p-3.5 rounded-2xl border border-white/10 hover:border-red-500/40 text-white/60 hover:text-red-400 bg-white/5 hover:bg-red-500/5 transition-all duration-300 flex items-center justify-center cursor-pointer shrink-0 md:self-center"
-                            title="Dismiss Application"
+                            className="p-3 rounded-2xl border border-white/10 hover:border-red-500/40 text-white/50 hover:text-red-400 bg-white/5 hover:bg-red-500/10 transition-all duration-300 flex items-center justify-center cursor-pointer shrink-0 md:self-center"
+                            title="Dismiss Onboarding Request"
                           >
-                            <Trash2 size={13} />
+                            <Trash2 size={14} />
                           </button>
                         </div>
                       ))
                     ) : (
-                      <div className="py-12 text-center text-[#C8B1CC]/40 border border-dashed border-white/10 rounded-2xl">
-                        <Dices size={24} className="mx-auto mb-3 opacity-30 animate-bounce" />
-                        <p className="font-sans text-xs">No pending onboarding applications found.</p>
+                      <div className="py-16 text-center text-[#C8B1CC]/40 border border-dashed border-white/10 rounded-[2.5rem]">
+                        <Dices size={32} className="mx-auto mb-3 opacity-30 animate-bounce text-[#f8b146]" />
+                        <p className="font-sans text-xs">No pending member onboarding requests in storage.</p>
                       </div>
                     )}
                   </div>
@@ -1549,6 +1729,24 @@ export default function AdminPanel({ isOpen, onClose, games, onAddGame, onUpdate
           </div>
         )}
       </div>
+      
+      {/* Global CSS Inject to customize styling */}
+      <style dangerouslySetInnerHTML={{__html: `
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 5px;
+          height: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(18, 5, 21, 0.2);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(248, 177, 70, 0.2);
+          border-radius: 99px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(248, 177, 70, 0.4);
+        }
+      `}} />
     </div>
   );
 }
