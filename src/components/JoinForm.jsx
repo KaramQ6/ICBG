@@ -381,7 +381,7 @@ export default function JoinForm() {
                     </>
                   ) : (
                     <>
-                      <span>Submit Application</span>
+                      <span>Submit Application and Join Group</span>
                       <ArrowRight size={13} className="text-[#3a1d42] transition-transform duration-300 group-hover:translate-x-1" />
                     </>
                   )}
@@ -443,12 +443,52 @@ export default function JoinForm() {
                   </div>
                 </div>
 
-                {/* Back to Home Button */}
+                {/* Big, Noticeable Instagram Call-to-Action */}
+                <div className="max-w-sm mx-auto mb-8 p-6 rounded-3xl bg-gradient-to-br from-[#f8b146]/10 to-[#f28a75]/10 border border-[#f8b146]/20 backdrop-blur-md text-center shadow-lg relative overflow-hidden group">
+                  <div className="absolute -right-8 -top-8 w-24 h-24 bg-[#f8b146]/5 rounded-full blur-xl group-hover:scale-125 transition-all duration-500" />
+                  
+                  <span className="font-mono text-[9px] uppercase tracking-widest text-[#f8b146] font-black block mb-2">
+                    Official Community Group
+                  </span>
+                  
+                  <h4 className="font-serif italic text-2xl text-white mb-2">
+                    Join the Instagram Group
+                  </h4>
+                  
+                  <p className="font-sans font-light text-[#C8B1CC] text-xs leading-relaxed mb-5">
+                    Connect with other strategists, view game lineups, and get updates for upcoming meetups!
+                  </p>
+
+                  <div className="flex flex-col gap-3">
+                    <a
+                      href="https://ig.me/j/AbY3FEHwnXakftdy/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full inline-flex items-center justify-center gap-2 py-3 px-5 rounded-2xl bg-gradient-to-r from-[#f8b146] to-[#f28a75] hover:scale-[1.03] active:scale-[0.97] text-[#3a1d42] font-sans font-black text-xs uppercase tracking-widest transition-all duration-300 shadow-md shadow-[#f8b146]/15 hover:shadow-[#f8b146]/25 cursor-pointer"
+                    >
+                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+                      </svg>
+                      Join Instagram Group
+                    </a>
+
+                    <a
+                      href="https://www.instagram.com/irbidboardgamescommunity?igsh=YTBtbWdnM2U2NWM4"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-4 rounded-xl border border-white/10 hover:border-[#f8b146]/30 hover:bg-[#f8b146]/5 text-[#C8B1CC] hover:text-white transition-all duration-300 font-sans font-bold text-[10px] uppercase tracking-wider cursor-pointer"
+                    >
+                      Follow Instagram Page
+                    </a>
+                  </div>
+                </div>
+
+                {/* Back to Home Button (Secondary) */}
                 <button
                   onClick={handleReset}
-                  className="px-6 py-2.5 rounded-full border border-white/10 text-[#C8B1CC] hover:text-white hover:border-[#f8b146]/50 hover:bg-[#f8b146]/5 transition-all duration-300 font-mono text-[9px] uppercase tracking-widest font-bold cursor-pointer inline-flex items-center gap-1.5"
+                  className="px-5 py-2 rounded-full border border-white/5 text-[#C8B1CC]/60 hover:text-white hover:border-[#f8b146]/30 hover:bg-[#f8b146]/5 transition-all duration-300 font-mono text-[8px] uppercase tracking-widest font-bold cursor-pointer inline-flex items-center gap-1.5"
                 >
-                  <Sparkles size={11} className="text-[#f8b146]" />
+                  <Sparkles size={10} className="text-[#f8b146]/60" />
                   Submit Another Form
                 </button>
               </div>

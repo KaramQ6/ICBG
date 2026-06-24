@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
-import { ChevronDown, Calendar, Users, Target } from 'lucide-react';
+import { ChevronDown, Calendar, Users, Target, Sparkles } from 'lucide-react';
 
 export default function Hero({ schedule }) {
   const locationName = schedule?.locationName || "Cortina.D Cafe";
@@ -141,7 +141,7 @@ export default function Hero({ schedule }) {
 
 
         {/* CTA scroll down */}
-        <div ref={ctaRef} className="mt-6 md:mt-10 flex items-center gap-4">
+        <div ref={ctaRef} className="mt-6 md:mt-10 flex flex-wrap items-center gap-4">
           <button
             onClick={scrollToCollection}
             className="group relative px-8 py-4 bg-gradient-to-r from-[#f8b146] to-[#f28a75] text-[#3a1d42] font-sans font-black text-xs uppercase tracking-widest rounded-full shadow-xl shadow-[#f8b146]/15 hover:scale-[1.05] hover:shadow-[0_0_35px_rgba(248,177,70,0.3)] animate-float transition-all duration-300 ease-out cursor-pointer"
@@ -157,6 +157,26 @@ export default function Hero({ schedule }) {
             className="lift-link px-6 py-4 border border-white/10 hover:border-[#f8b146]/45 bg-transparent text-white font-sans font-semibold text-xs uppercase tracking-widest rounded-full transition-all duration-300 cursor-pointer"
           >
             Our Philosophy
+          </button>
+
+          <button
+            onClick={() => {
+              const el = document.getElementById('join');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="group relative px-6 py-4 bg-gradient-to-r from-[#f8b146] to-[#f28a75] text-[#3a1d42] font-sans font-black text-xs uppercase tracking-widest rounded-full shadow-xl shadow-[#f8b146]/15 hover:scale-[1.05] hover:shadow-[0_0_35px_rgba(248,177,70,0.3)] transition-all duration-300 ease-out cursor-pointer flex items-center gap-1.5"
+          >
+            Join Us! <Sparkles size={12} className="text-[#3a1d42] group-hover:animate-pulse" />
+          </button>
+
+          <button
+            onClick={() => {
+              const el = document.getElementById('weekly');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="lift-link px-6 py-4 border border-white/10 hover:border-[#f8b146]/45 bg-transparent text-white font-sans font-semibold text-xs uppercase tracking-widest rounded-full transition-all duration-300 cursor-pointer"
+          >
+            Games of the Week
           </button>
         </div>
       </div>

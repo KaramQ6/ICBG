@@ -1,5 +1,24 @@
 import React from 'react';
-import { Calendar, MapPin, Sparkles, Play, BookOpen, MessageSquare } from 'lucide-react';
+import { Calendar, MapPin, Sparkles, Play, BookOpen } from 'lucide-react';
+
+const Instagram = ({ size = 24, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+  </svg>
+);
 
 export default function WeeklySpotlight({ schedule, games, onScrollToCollection }) {
   const locationName = schedule?.locationName || "Cortina.D Cafe";
@@ -113,13 +132,13 @@ export default function WeeklySpotlight({ schedule, games, onScrollToCollection 
 
               {/* Action Buttons */}
               <div className="mt-10 space-y-3">
-                <a
-                  href="https://chat.whatsapp.com/IBGC" 
+                 <a
+                  href="https://ig.me/j/AbY3FEHwnXakftdy/" 
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full flex items-center justify-center gap-2 group/btn px-6 py-4 bg-gradient-to-r from-[#f8b146] to-[#f28a75] text-[#3a1d42] rounded-full font-sans font-bold text-xs uppercase tracking-widest shadow-md shadow-[#f8b146]/15 hover:scale-[1.02] hover:shadow-[0_8px_30px_rgba(248,177,70,0.3)] transition-all duration-300"
                 >
-                  <MessageSquare size={14} /> Join Whatsapp Chat
+                  <Instagram size={14} /> Join Instagram Chat
                 </a>
                 
                 <a
